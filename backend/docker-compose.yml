@@ -1,0 +1,19 @@
+services:
+  postgres-db-alura:
+    image: postgres:16
+    container_name: postgres-db-b2list-container
+    environment:
+      - POSTGRES_USER=felipe
+      - POSTGRES_PASSWORD=felipe
+      - POSTGRES_DB=b2list
+    ports:
+      - "5432:5432"
+
+  RabbitMQ:
+    image: rabbitmq:3.10-management
+    ports:
+      - "5672:5672"     #AMQP
+      - "15672:15672"   #Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
