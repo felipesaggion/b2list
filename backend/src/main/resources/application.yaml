@@ -1,4 +1,8 @@
+
 spring:
+  mvc:
+    servlet:
+      path: /api/v1
   application:
     name: b2list
   datasource:
