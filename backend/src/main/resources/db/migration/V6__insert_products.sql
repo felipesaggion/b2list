@@ -1,0 +1,60 @@
+INSERT INTO product_price (product_code, product_name, warehouse_id, unit_price, list_price, tenant_code, enabled)
+VALUES ('PROD-001', 'Laptop Model A', '6ae7a630-c78c-4963-ac09-074b919f04ac', 1200.0000, 1500.0000, 'TEN001', true),
+       ('PROD-002', 'Smartphone X', '6ae7a630-c78c-4963-ac09-074b919f04ac', 800.0000, 950.0000, 'TEN001', false),
+       ('PROD-003', 'Tablet Pro', '6ae7a630-c78c-4963-ac09-074b919f04ac', 600.0000, 750.0000, 'TEN001', true),
+       ('PROD-004', 'Wireless Headphones', '6ae7a630-c78c-4963-ac09-074b919f04ac', 150.0000, 200.0000, 'TEN001', true),
+       ('PROD-005', 'Gaming Console Z', '6ae7a630-c78c-4963-ac09-074b919f04ac', 400.0000, 500.0000, 'TEN001', true),
+
+       ('PROD-006', 'Office Chair Deluxe', '89302286-2335-4aad-b8f6-4e46ddd62511', 250.0000, 320.0000, 'TEN001', true),
+       ('PROD-007', 'Standing Desk', '89302286-2335-4aad-b8f6-4e46ddd62511', 450.0000, 600.0000, 'TEN001', false),
+       ('PROD-008', 'LED Monitor 27"', '89302286-2335-4aad-b8f6-4e46ddd62511', 300.0000, 380.0000, 'TEN001', true),
+       ('PROD-009', 'Mechanical Keyboard', '89302286-2335-4aad-b8f6-4e46ddd62511', 90.0000, 120.0000, 'TEN001', true),
+       ('PROD-010', 'Ergonomic Mouse', '89302286-2335-4aad-b8f6-4e46ddd62511', 40.0000, 55.0000, 'TEN001', true),
+
+       ('PROD-011', 'Refrigerator XL', 'c99fdd86-714e-4cb3-ad09-9764d59f6db4', 900.0000, 1100.0000, 'TEN002', true),
+       ('PROD-012', 'Microwave Oven', 'c99fdd86-714e-4cb3-ad09-9764d59f6db4', 120.0000, 160.0000, 'TEN002', true),
+       ('PROD-013', 'Dishwasher Compact', 'c99fdd86-714e-4cb3-ad09-9764d59f6db4', 500.0000, 650.0000, 'TEN002', false),
+       ('PROD-014', 'Air Conditioner', 'c99fdd86-714e-4cb3-ad09-9764d59f6db4', 700.0000, 850.0000, 'TEN002', true),
+       ('PROD-015', 'Vacuum Cleaner', 'c99fdd86-714e-4cb3-ad09-9764d59f6db4', 200.0000, 260.0000, 'TEN002', true),
+
+       ('PROD-016', 'Mountain Bike', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 350.0000, 450.0000, 'TEN002', true),
+       ('PROD-017', 'Treadmill Pro', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 800.0000, 1000.0000, 'TEN002', true),
+       ('PROD-018', 'Dumbbell Set', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 100.0000, 130.0000, 'TEN002', true),
+       ('PROD-019', 'Yoga Mat', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 30.0000, 45.0000, 'TEN002', true),
+       ('PROD-020', 'Rowing Machine', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 600.0000, 750.0000, 'TEN002', true),
+
+       ('PROD-021', 'Winter Jacket', 'fb93363f-9567-4ece-b2d6-b52f851ad187', 120.0000, 160.0000, 'TEN003', true),
+       ('PROD-022', 'Sneakers Sport', 'fb93363f-9567-4ece-b2d6-b52f851ad187', 80.0000, 110.0000, 'TEN003', true),
+       ('PROD-023', 'Leather Boots', 'fb93363f-9567-4ece-b2d6-b52f851ad187', 150.0000, 200.0000, 'TEN003', true),
+       ('PROD-024', 'Casual Shirt', 'fb93363f-9567-4ece-b2d6-b52f851ad187', 40.0000, 60.0000, 'TEN003', false),
+       ('PROD-025', 'Jeans Classic', 'fb93363f-9567-4ece-b2d6-b52f851ad187', 70.0000, 95.0000, 'TEN003', true),
+
+       ('PROD-026', 'Smartwatch Series 5', '6ae7a630-c78c-4963-ac09-074b919f04ac', 250.0000, 320.0000, 'TEN001', true),
+       ('PROD-027', 'Fitness Tracker', '6ae7a630-c78c-4963-ac09-074b919f04ac', 100.0000, 140.0000, 'TEN001', true),
+       ('PROD-028', 'Bluetooth Speaker', '6ae7a630-c78c-4963-ac09-074b919f04ac', 60.0000, 85.0000, 'TEN001', false),
+       ('PROD-029', 'Portable Charger', '6ae7a630-c78c-4963-ac09-074b919f04ac', 25.0000, 35.0000, 'TEN001', true),
+       ('PROD-030', 'Drone Explorer', '6ae7a630-c78c-4963-ac09-074b919f04ac', 500.0000, 650.0000, 'TEN001', true),
+
+       ('PROD-031', 'Cookware Set', '89302286-2335-4aad-b8f6-4e46ddd62511', 200.0000, 260.0000, 'TEN002', true),
+       ('PROD-032', 'Coffee Maker', '89302286-2335-4aad-b8f6-4e46ddd62511', 90.0000, 120.0000, 'TEN002', true),
+       ('PROD-033', 'Blender Pro', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 70.0000, 95.0000, 'TEN002', true),
+       ('PROD-034', 'Toaster XL', '89302286-2335-4aad-b8f6-4e46ddd62511', 40.0000, 55.0000, 'TEN002', false),
+       ('PROD-035', 'Juicer Compact', '89302286-2335-4aad-b8f6-4e46ddd62511', 110.0000, 140.0000, 'TEN002', true),
+
+       ('PROD-036', 'Novel Book A', 'c99fdd86-714e-4cb3-ad09-9764d59f6db4', 15.0000, 20.0000, 'TEN003', true),
+       ('PROD-037', 'Science Textbook', 'c99fdd86-714e-4cb3-ad09-9764d59f6db4', 60.0000, 80.0000, 'TEN003', true),
+       ('PROD-038', 'Children Storybook', 'c99fdd86-714e-4cb3-ad09-9764d59f6db4', 25.0000, 35.0000, 'TEN003', true),
+       ('PROD-039', 'Art Album', 'c99fdd86-714e-4cb3-ad09-9764d59f6db4', 100.0000, 130.0000, 'TEN003', true),
+       ('PROD-040', 'Cookbook Deluxe', 'c99fdd86-714e-4cb3-ad09-9764d59f6db4', 45.0000, 60.0000, 'TEN003', true),
+
+       ('PROD-041', 'Smart TV 55"', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 700.0000, 900.0000, 'TEN001', true),
+       ('PROD-042', 'Soundbar System', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 150.0000, 200.0000, 'TEN001', true),
+       ('PROD-043', 'Home Theater Projector', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 400.0000, 550.0000, 'TEN001', true),
+       ('PROD-044', 'Streaming Device', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 50.0000, 70.0000, 'TEN001', true),
+       ('PROD-045', 'Gaming Laptop Pro', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 1500.0000, 2000.0000, 'TEN001', true),
+
+       ('PROD-046', 'Electric Scooter', 'fb93363f-9567-4ece-b2d6-b52f851ad187', 300.0000, 400.0000, 'TEN002', true),
+       ('PROD-047', 'Smart Home Hub', 'fb93363f-9567-4ece-b2d6-b52f851ad187', 80.0000, 110.0000, 'TEN002', true),
+       ('PROD-048', 'Security Camera', 'fb93363f-9567-4ece-b2d6-b52f851ad187', 120.0000, 160.0000, 'TEN002', true),
+       ('PROD-049', 'Robot Vacuum', 'fb93363f-9567-4ece-b2d6-b52f851ad187', 250.0000, 320.0000, 'TEN002', true),
+       ('PROD-050', 'Smart Door Lock', 'fb93363f-9567-4ece-b2d6-b52f851ad187', 100.0000, 140.0000, 'TEN002', true);

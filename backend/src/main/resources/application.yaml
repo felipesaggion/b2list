@@ -34,4 +34,7 @@ logging:
     org.flywaydb: INFO
     org.hibernate.orm.connections: INFO
 
+jwt:
+  secret: mocked-jwt-secret-key-for-development-that-must-be-at-least-256-bits-long
+  expiration: 3600000
 
