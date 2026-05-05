@@ -247,7 +247,7 @@ public class OrderUtils {
             List<String> details = List.of("Tenant code não esta presente no header(x-tenant)");
             errorResponseDTO.setDetails(details);
             log.error(ToStringBuilder.reflectionToString(errorResponseDTO, ToStringStyle.MULTI_LINE_STYLE));
-            return ResponseEntity.unprocessableEntity().body(errorResponseDTO);
+            return ResponseEntity.badRequest().body(errorResponseDTO);
         }
         return null;
     }

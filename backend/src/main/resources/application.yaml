@@ -1,5 +1,13 @@
 
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        acknowledge-mode: manual
   mvc:
     servlet:
       path: /api/v1
@@ -37,8 +45,11 @@ logging:
   level:
     org.flywaydb: INFO
     org.hibernate.orm.connections: INFO
-
 jwt:
   secret: mocked-jwt-secret-key-for-development-that-must-be-at-least-256-bits-long
   expiration: 3600000
-
+rabbitmq:
+  dlq:
+    ttl: 5000
+  parking-lot:
+    ttl: 2592000000

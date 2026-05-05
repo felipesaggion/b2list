@@ -19,6 +19,8 @@ import br.com.b2list.domain.entity.Seller;
 import br.com.b2list.domain.entity.Warehouse;
 import br.com.b2list.enums.Error;
 import br.com.b2list.enums.OrderStatus;
+import br.com.b2list.event.OrderPayload;
+import br.com.b2list.producer.OrderEventProducer;
 import br.com.b2list.projection.OrderListingProjection;
 import br.com.b2list.projection.OrderSummaryProjection;
 import br.com.b2list.repository.OrderRepository;
@@ -44,6 +46,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static br.com.b2list.util.OrderUtils.checkIfOrderIsAlreadyCanceled;
 import static br.com.b2list.util.OrderUtils.checkIfOrderIsPresent;
@@ -74,6 +77,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private GenericPaymentCalculator genericPaymentCalculator;
+
+    @Autowired
+    private OrderEventProducer orderEventProducer;
 
     @GetMapping
     public ResponseEntity<?> findAllPaginated() {
@@ -180,12 +186,24 @@ public class OrderServiceImpl implements OrderService {
             if (errorResponseDTO != null) return errorResponseDTO;
         }
 
+        UUID correlationId = UUID.randomUUID();
+
+        OrderPayload payload = new OrderPayload();
+        payload.setExternalReference(orderSaved.getExternalReference());
+        payload.setBuyerReference(orderSaved.getBuyer().getExternalReference());
+        payload.setOrderId(orderSaved.getId());
+        payload.setTotal(orderSaved.getTotal());
+        payload.setStatus(orderSaved.getStatus());
+
+        orderEventProducer.publishOrderCreatedEvent(payload, tenant, correlationId);
+        log.info("Evento ORDER_CREATED publicado para o pedido: {}, correlationId: {}", payload.getOrderId(), correlationId);
+
         OrderResponseDTO orderResponseDTO = OrderUtils.populateOrderResponseDTO(orderSaved, paymentCondition, orderResult);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponseDTO);
     }
 
-    private ResponseEntity<ErrorResponseDTO> decreaseBuyersLimit(Order orderSaved, Buyer buyer) {
+    public ResponseEntity<ErrorResponseDTO> decreaseBuyersLimit(Order orderSaved, Buyer buyer) {
         try {
             log.info("Iniciando decremento atômico de crédito para pedido: {}", orderSaved.getCode());
             buyerService.decrementCreditAtomically(buyer.getId(), orderSaved.getTotal());
@@ -207,10 +225,10 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
 
-    private ResponseEntity<ErrorResponseDTO> increaseBuyersLimit(Order order, Buyer buyer) {
+    public ResponseEntity<ErrorResponseDTO> increaseBuyersLimit(Order order, UUID buyerId) {
         try {
             log.info("Iniciando incremento atômico de crédito para pedido: {}", order.getCode());
-            buyerService.increaseCreditAtomically(buyer.getId(), order.getTotal());
+            buyerService.increaseCreditAtomically(buyerId, order.getTotal());
             log.info("Crédito incrementado com sucesso após aprovação do pedido: {}", order.getCode());
         } catch (IllegalStateException ex) {
             log.error("Erro ao incrementar crédito: {}", ex.getMessage());
@@ -286,12 +304,12 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public ResponseEntity<?> cancelOrder(String externalReference) {
         String tenant = TenantContext.getTenant();
-        ResponseEntity<ErrorResponseDTO> errorResponse =checkIfTenantIsPresent(tenant);
+        ResponseEntity<ErrorResponseDTO> errorResponse = checkIfTenantIsPresent(tenant);
         if (errorResponse != null) return errorResponse;
 
         Order order = orderRepository.findByExternalReferenceAndTenantCode(externalReference, tenant);
 
-        errorResponse =  checkIfOrderIsPresent(order, externalReference);
+        errorResponse = checkIfOrderIsPresent(order, externalReference);
         if (errorResponse != null) return errorResponse;
 
         errorResponse = checkIfOrderIsAlreadyCanceled(externalReference, order);
@@ -300,12 +318,24 @@ public class OrderServiceImpl implements OrderService {
         Buyer buyer = order.getBuyer();
 
         if (!order.getPaymentCondition().getAllowBonusOrder()) {
-            ResponseEntity<ErrorResponseDTO> errorResponseDTO = increaseBuyersLimit(order, buyer);
+            ResponseEntity<ErrorResponseDTO> errorResponseDTO = increaseBuyersLimit(order, buyer.getId());
             if (errorResponseDTO != null) return errorResponseDTO;
         }
 
         order.setStatus(OrderStatus.CANCELLED);
         order = save(order);
+
+        UUID correlationId = UUID.randomUUID();
+
+        OrderPayload payload = new OrderPayload();
+        payload.setExternalReference(order.getExternalReference());
+        payload.setBuyerReference(order.getBuyer().getExternalReference());
+        payload.setOrderId(order.getId());
+        payload.setTotal(order.getTotal());
+        payload.setStatus(order.getStatus());
+
+        orderEventProducer.publishOrderCancelledEvent(payload, tenant, correlationId);
+        log.info("Evento ORDER_CANCELLED publicado para o pedido: {}, correlationId: {}", payload.getOrderId(), correlationId);
 
         return ResponseEntity.ok(convertOrderToOrderDTO(order));
     }
