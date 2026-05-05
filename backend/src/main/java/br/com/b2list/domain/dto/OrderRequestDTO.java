@@ -16,11 +16,5 @@ public class OrderRequestDTO {
     private String paymentConditionCode;
     private List<ItemDTO> items;
 
-    @Getter
-    @Setter
-    public static class ItemDTO {
-        private String productCode;
-        private int quantity;
 
-    }
 }

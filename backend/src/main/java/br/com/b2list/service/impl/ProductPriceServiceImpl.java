@@ -1,5 +1,6 @@
 package br.com.b2list.service.impl;
 
+import br.com.b2list.domain.dto.TopProductDTO;
 import br.com.b2list.domain.entity.ProductPrice;
 import br.com.b2list.repository.ProductPriceRepository;
 import br.com.b2list.service.ProductPriceService;
@@ -42,5 +43,10 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     @Override
     public void deleteById(UUID id) {
         productPriceRepository.deleteById(id);
+    }
+
+    @Override
+    public List<TopProductDTO> findTopProducts(String tenant, OffsetDateTime from, OffsetDateTime to) {
+        return productPriceRepository.findTopProducts(tenant, from, to);
     }
 }

@@ -3,7 +3,7 @@ package br.com.b2list.enums;
 public enum OrderStatus {
     PENDING,
     COMPLETED,
-    CANCELED;
+    CANCELLED;
 
     public static OrderStatus fromString(String value) {
         if (value == null) {

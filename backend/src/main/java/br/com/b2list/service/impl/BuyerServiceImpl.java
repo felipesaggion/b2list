@@ -1,5 +1,6 @@
 package br.com.b2list.service.impl;
 
+import br.com.b2list.domain.dto.TopBuyerDTO;
 import br.com.b2list.domain.entity.Buyer;
 import br.com.b2list.repository.BuyerRepository;
 import br.com.b2list.service.BuyerService;
@@ -83,4 +84,32 @@ public class BuyerServiceImpl implements BuyerService {
 
         return updatedBuyer;
     }
+
+    @Transactional
+    @Override
+    public Buyer increaseCreditAtomically(UUID buyerId, BigDecimal amount) {
+        log.info("Iniciando incremento atômico de crédito para buyerId: {} com amount: {}", buyerId, amount);
+
+        Buyer buyer = buyerRepository.findByIdWithLock(buyerId)
+                .orElseThrow(() -> new IllegalStateException("Comprador não encontrado: " + buyerId));
+
+        BigDecimal currentCredit = buyer.getCreditLimit();
+        BigDecimal newCredit = currentCredit.add(amount);
+        buyer.setCreditLimit(newCredit);
+        buyer.setLastModified(OffsetDateTime.now());
+
+        Buyer updatedBuyer = buyerRepository.save(buyer);
+
+        log.info("Crédito incrementado com sucesso. Buyer: {}, Crédito anterior: {}, Crédito novo: {}",
+                buyerId, currentCredit, newCredit);
+
+        return updatedBuyer;
+    }
+
+    @Override
+    public List<TopBuyerDTO> findTopBuyers(String tenant, OffsetDateTime from, OffsetDateTime to) {
+        return buyerRepository.findTopBuyers(tenant, from, to);
+    }
+
+
 }

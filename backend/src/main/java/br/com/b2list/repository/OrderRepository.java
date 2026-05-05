@@ -3,6 +3,7 @@ package br.com.b2list.repository;
 import br.com.b2list.domain.entity.Order;
 import br.com.b2list.enums.OrderStatus;
 import br.com.b2list.projection.OrderListingProjection;
+import br.com.b2list.projection.OrderSummaryProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,4 +48,18 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             @Param("buyerRef") String buyerRef,
             @Param("tenantCode") String tenantCode,
             Pageable pageable);
+
+    @Query("""
+                SELECT COUNT(o) as totalOrders,
+                       SUM(CASE WHEN o.status = 'COMPLETED' THEN 1 ELSE 0 END) as confirmedOrders,
+                       SUM(CASE WHEN o.status = 'CANCELLED' THEN 1 ELSE 0 END) as cancelledOrders,
+                       SUM(o.total) as totalRevenue,
+                       AVG(o.total) as averageOrderValue
+                FROM Order o
+                WHERE o.tenantCode = :tenant
+                  AND o.createdAt BETWEEN :from AND :to
+            """)
+    OrderSummaryProjection getSummary(String tenant, OffsetDateTime from, OffsetDateTime to);
+
+    Order findByExternalReferenceAndTenantCode(String externalReference, String tenantCode);
 }

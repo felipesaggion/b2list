@@ -10,9 +10,10 @@ public enum Error {
     ORD_VALIDATION_005("ORD-VALIDATION-005", HttpStatus.UNPROCESSABLE_ENTITY, "Falha na validação da strategy do tenant"),
     ORD_VALIDATION_006("ORD-VALIDATION-006", HttpStatus.BAD_REQUEST, "Campos obrigatorios estão faltando"),
     ORD_VALIDATION_007("ORD-VALIDATION-007", HttpStatus.UNPROCESSABLE_ENTITY, "Falha na validação das regras de negocio"),
+    ORD_VALIDATION_008("ORD-VALIDATION-008", HttpStatus.UNPROCESSABLE_ENTITY, "Limite de tamanho para pagina excedido, max 50."),
     ORD_DUPLICATE_001("ORD-DUPLICATE-001", HttpStatus.CONFLICT, "External reference duplicado"),
     ORD_STATUS_001("ORD-STATUS-001", HttpStatus.UNPROCESSABLE_ENTITY, "Transição de status inválida"),
-    ORD_CONCURRENCY_001("ORD-CONCURRENCY-001", HttpStatus.CONFLICT, "Conflito de concorrência (o'ptimistic lock)");
+    ORD_CONCURRENCY_001("ORD-CONCURRENCY-001", HttpStatus.CONFLICT, "Conflito de concorrência (optimistic lock)");
 
     private final String errorCode;
     private final HttpStatus httpStatus;
