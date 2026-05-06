@@ -36,7 +36,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             WHERE (:tenantCode IS NULL OR o.tenantCode = :tenantCode)
             AND (o.createdAt >= :startDate)
             AND (o.createdAt <= :endDate)
-            AND o.status = :status
+            AND (:status IS NULL OR o.status = :status)
             AND (:buyerRef IS NULL OR b.externalReference = :buyerRef)
             GROUP BY o.id, b.id, s.id, wh.id
             ORDER BY o.externalReference ASC

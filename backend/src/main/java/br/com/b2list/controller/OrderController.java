@@ -34,8 +34,8 @@ public class OrderController {
     public ResponseEntity<?> findAllPaginated(
             @RequestParam Integer page,
             @RequestParam Integer size,
-            @RequestParam OrderStatus status,
-            @RequestParam String buyerRef,
+            @RequestParam(required = false) OrderStatus status,
+            @RequestParam(required = false) String buyerRef,
             @RequestParam OffsetDateTime startDate,
             @RequestParam OffsetDateTime endDate) {
 

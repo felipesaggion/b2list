@@ -80,13 +80,16 @@ public class GenericPaymentCalculator implements PaymentCalculator {
     private BigDecimal getDiscount(BigDecimal subtotal, PaymentCondition condition) {
         BigDecimal discount = BigDecimal.ZERO;
 
-        if (condition.getDiscountPercent() != null && condition.getDiscountPercent().compareTo(BigDecimal.ZERO) > 0) {
+        if (condition.getDiscountPercent() != null && condition.getDiscountPercent().compareTo(BigDecimal.ZERO) > 0 &&
+                "Pedidos acima de R$500".equalsIgnoreCase(condition.getDiscountCondition()) &&
+                subtotal.compareTo(BigDecimal.valueOf(500)) > 0) {
             discount = discount.add(subtotal.multiply(condition.getDiscountPercent().divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN)));
         }
 
         if ("Pagamento à vista".equalsIgnoreCase(condition.getDiscountCondition())) {
             discount = discount.add(subtotal.multiply(condition.getDiscountExtraPercent().divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN)));
         }
+
         return discount;
     }
 }

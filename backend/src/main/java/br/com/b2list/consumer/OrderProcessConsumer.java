@@ -2,6 +2,7 @@ package br.com.b2list.consumer;
 
 import br.com.b2list.config.RabbitMQConfig;
 import br.com.b2list.event.OrderEvent;
+import br.com.b2list.tenant.TenantContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class OrderProcessConsumer {
         MessageProperties messageProperties = message.getMessageProperties();
         Map<String, Object> headers = message.getMessageProperties().getHeaders();
 
-        String tenant = (String) headers.get("x-tenant");
+        String tenant = TenantContext.getTenant();
         String eventType = (String) headers.get("x-event-type");
         String correlationId = (String) headers.get("x-correlation-id");
         Integer retryCount = (Integer) headers.getOrDefault("x-retry-count", 0);
