@@ -1,0 +1,578 @@
+{
+  "info": {
+    "_postman_id": "c0562aaf-96a8-483e-9e11-cc7585f9d036",
+    "name": "b2list",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "2627062",
+    "_collection_link": "https://go.postman.co/collection/2627062-c0562aaf-96a8-483e-9e11-cc7585f9d036?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login - Obter Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Salva o token em uma variável para usar em outras requisições",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('jwt_token', jsonData.accessToken);",
+                  "    pm.environment.set('username', jsonData.username);",
+                  "    pm.environment.set('tenantCode', jsonData.tenantCode);",
+                  "    console.log('Token armazenado com sucesso!');",
+                  "    console.log('Token: ' + jsonData.accessToken.substring(0, 50) + '...');",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin@b2list.com\",\n  \"password\": \"senha123\",\n  \"tenantCode\": \"TEN002\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Faça login para obter um token JWT. O token será automaticamente salvo nas variáveis de ambiente."
+          },
+          "response": []
+        },
+        {
+          "name": "Validar Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/auth/validate?token={{jwt_token}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "validate"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}"
+                }
+              ]
+            },
+            "description": "Valida se o token JWT é válido"
+          },
+          "response": []
+        },
+        {
+          "name": "Auth Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/v1/auth/health",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "health"
+              ]
+            },
+            "description": "Health check do serviço de autenticação"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints de autenticação JWT"
+    },
+    {
+      "name": "Create Tenant",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "tenantCode",
+              "value": "tenant_test",
+              "description": "teste de criação de schema",
+              "type": "text",
+              "uuid": "190c03cd-942a-4378-ae2a-6b25a025422b"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/tenants/create",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "tenants",
+            "create"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Tenant",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/tenants/list",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "tenants",
+            "list"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create order",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJhdXRoZW50aWNhdGVkX2F0IjoxNzc3OTI0MDk4ODI4LCJyb2xlcyI6IlVTRVIiLCJzdWIiOiJhZG1pbkBiMmxpc3QuY29tIiwiaWF0IjoxNzc3OTI0MDk4LCJleHAiOjE3Nzc5Mjc2OTh9.JV3av8Er3ePlWftupwGlLWYsnyEZ4m34OpJeTjltQ1xZO3pQlapDvwoN1kRUF36_MSC_OzCxgOCctOfB0hiPQw",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-tenant",
+            "value": "TEN002",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"externalReference\": \"PED-2025-00123\",\r\n    \"buyerReference\": \"BUYER-004\",\r\n    \"sellerReference\": \"SELLER-004\",\r\n    \"warehouseReference\": \"WH-004\",\r\n    \"paymentConditionCode\": \"30-60-90\",\r\n    \"items\": [\r\n        {\r\n            \"productCode\": \"PROD-019\",\r\n            \"quantity\": 10\r\n        },\r\n        {\r\n            \"productCode\": \"PROD-033\",\r\n            \"quantity\": 5\r\n        }\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/order",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "order"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Orders",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJhdXRoZW50aWNhdGVkX2F0IjoxNzc3OTk3NzI5ODU5LCJyb2xlcyI6IlVTRVIiLCJzdWIiOiJ0ZXN0ZSIsImlhdCI6MTc3Nzk5NzcyOSwiZXhwIjoxNzc4MDAxMzI5fQ.ySWRdNllvU7EVGo9FQRlYF-hCMJN8Euw-Yc3Wv6y-YiS8hQAFHoHpi08ribkGES_WLxWnSnwkCa-iQb832LPqg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-tenant",
+            "value": "TEN002",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/order?size=10&page=0&status=COMPLETED&buyerRef=BUYER-004&startDate=2026-05-01T12:34:56-03:00&endDate=2026-05-06T00:00:00-03:00",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "order"
+          ],
+          "query": [
+            {
+              "key": "size",
+              "value": "10"
+            },
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "status",
+              "value": "COMPLETED"
+            },
+            {
+              "key": "buyerRef",
+              "value": "BUYER-004"
+            },
+            {
+              "key": "startDate",
+              "value": "2026-05-01T12:34:56-03:00"
+            },
+            {
+              "key": "endDate",
+              "value": "2026-05-06T00:00:00-03:00"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Order Statistics",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJhdXRoZW50aWNhdGVkX2F0IjoxNzc3OTI0MTM2MTE1LCJyb2xlcyI6IlVTRVIiLCJzdWIiOiJhZG1pbkBiMmxpc3QuY29tIiwiaWF0IjoxNzc3OTI0MTM2LCJleHAiOjE3Nzc5Mjc3MzZ9.NCbNIF3LM1L9wavitGRl4WDE0_8JYHxhNpVbuOZoSXL4EYyX3Alrf4wqO7LyKwftp4Z0aO1WIFV4qlM7ctDrag",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-tenant",
+            "value": "TEN002",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/order?size=10&page=0&status=COMPLETED&buyerRef=BUYER-004&startDate=2026-05-01T12:34:56-03:00&endDate=2026-05-05T00:00:00-03:00",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "order"
+          ],
+          "query": [
+            {
+              "key": "size",
+              "value": "10"
+            },
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "status",
+              "value": "COMPLETED"
+            },
+            {
+              "key": "buyerRef",
+              "value": "BUYER-004"
+            },
+            {
+              "key": "startDate",
+              "value": "2026-05-01T12:34:56-03:00"
+            },
+            {
+              "key": "endDate",
+              "value": "2026-05-05T00:00:00-03:00"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Order",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJhdXRoZW50aWNhdGVkX2F0IjoxNzc3OTI0MTM2MTE1LCJyb2xlcyI6IlVTRVIiLCJzdWIiOiJhZG1pbkBiMmxpc3QuY29tIiwiaWF0IjoxNzc3OTI0MTM2LCJleHAiOjE3Nzc5Mjc3MzZ9.NCbNIF3LM1L9wavitGRl4WDE0_8JYHxhNpVbuOZoSXL4EYyX3Alrf4wqO7LyKwftp4Z0aO1WIFV4qlM7ctDrag",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-tenant",
+            "value": "TEN002",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "x-tenant",
+              "value": "TEN002",
+              "type": "text",
+              "uuid": "d189c1b4-64f9-418a-9ae9-cda900d476d1"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/order?size=10&page=0&status=COMPLETED&buyerRef=BUYER-004&startDate=2026-05-01T12:34:56-03:00&endDate=2026-05-05T00:00:00-03:00",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "order"
+          ],
+          "query": [
+            {
+              "key": "size",
+              "value": "10"
+            },
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "status",
+              "value": "COMPLETED"
+            },
+            {
+              "key": "buyerRef",
+              "value": "BUYER-004"
+            },
+            {
+              "key": "startDate",
+              "value": "2026-05-01T12:34:56-03:00"
+            },
+            {
+              "key": "endDate",
+              "value": "2026-05-05T00:00:00-03:00"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cancel Order",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJhdXRoZW50aWNhdGVkX2F0IjoxNzc3OTI0MTM2MTE1LCJyb2xlcyI6IlVTRVIiLCJzdWIiOiJhZG1pbkBiMmxpc3QuY29tIiwiaWF0IjoxNzc3OTI0MTM2LCJleHAiOjE3Nzc5Mjc3MzZ9.NCbNIF3LM1L9wavitGRl4WDE0_8JYHxhNpVbuOZoSXL4EYyX3Alrf4wqO7LyKwftp4Z0aO1WIFV4qlM7ctDrag",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-tenant",
+            "value": "TEN002",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "x-tenant",
+              "value": "TEN002",
+              "type": "text",
+              "uuid": "d189c1b4-64f9-418a-9ae9-cda900d476d1"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/order?size=10&page=0&status=COMPLETED&buyerRef=BUYER-004&startDate=2026-05-01T12:34:56-03:00&endDate=2026-05-05T00:00:00-03:00",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "order"
+          ],
+          "query": [
+            {
+              "key": "size",
+              "value": "10"
+            },
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "status",
+              "value": "COMPLETED"
+            },
+            {
+              "key": "buyerRef",
+              "value": "BUYER-004"
+            },
+            {
+              "key": "startDate",
+              "value": "2026-05-01T12:34:56-03:00"
+            },
+            {
+              "key": "endDate",
+              "value": "2026-05-05T00:00:00-03:00"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reprocess Parking Lot",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJhdXRoZW50aWNhdGVkX2F0IjoxNzc3OTI0MTM2MTE1LCJyb2xlcyI6IlVTRVIiLCJzdWIiOiJhZG1pbkBiMmxpc3QuY29tIiwiaWF0IjoxNzc3OTI0MTM2LCJleHAiOjE3Nzc5Mjc3MzZ9.NCbNIF3LM1L9wavitGRl4WDE0_8JYHxhNpVbuOZoSXL4EYyX3Alrf4wqO7LyKwftp4Z0aO1WIFV4qlM7ctDrag",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-tenant",
+            "value": "TEN002",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "x-tenant",
+              "value": "TEN002",
+              "type": "text",
+              "uuid": "d189c1b4-64f9-418a-9ae9-cda900d476d1"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/order?size=10&page=0&status=COMPLETED&buyerRef=BUYER-004&startDate=2026-05-01T12:34:56-03:00&endDate=2026-05-05T00:00:00-03:00",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "order"
+          ],
+          "query": [
+            {
+              "key": "size",
+              "value": "10"
+            },
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "status",
+              "value": "COMPLETED"
+            },
+            {
+              "key": "buyerRef",
+              "value": "BUYER-004"
+            },
+            {
+              "key": "startDate",
+              "value": "2026-05-01T12:34:56-03:00"
+            },
+            {
+              "key": "endDate",
+              "value": "2026-05-05T00:00:00-03:00"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
