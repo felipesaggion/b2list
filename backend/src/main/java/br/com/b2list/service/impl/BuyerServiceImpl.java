@@ -1,14 +1,16 @@
 package br.com.b2list.service.impl;
 
+import br.com.b2list.domain.dto.BuyerDTO;
 import br.com.b2list.domain.dto.TopBuyerDTO;
 import br.com.b2list.domain.entity.Buyer;
+import br.com.b2list.mapper.BuyerMapper;
 import br.com.b2list.repository.BuyerRepository;
 import br.com.b2list.service.BuyerService;
 import br.com.b2list.tenant.TenantContext;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -22,26 +24,36 @@ public class BuyerServiceImpl implements BuyerService {
     @Autowired
     private BuyerRepository buyerRepository;
 
+    @Autowired
+    private BuyerMapper buyerMapper;
+
     @Override
-    public Buyer save(Buyer buyer) {
-        buyer.setTenantCode(TenantContext.getTenant());
-        if (buyer.getId() == null) {
-            buyer.setCreatedAt(OffsetDateTime.now());
-            buyer.setLastModified(buyer.getCreatedAt());
+    public BuyerDTO save(BuyerDTO buyerDTO) {
+        buyerDTO.setTenantCode(TenantContext.getTenant());
+        Buyer buyer = buyerRepository.findByExternalReferenceAndEnabledTrueAndTenantCode(
+                buyerDTO.getExternalReference(),
+                buyerDTO.getTenantCode()
+        );
+        UUID id = buyer.getId();
+        if (id == null) {
+            buyerDTO.setCreatedAt(OffsetDateTime.now());
+            buyerDTO.setLastModified(buyerDTO.getCreatedAt());
         } else {
-            buyer.setLastModified(OffsetDateTime.now());
+            buyerDTO.setLastModified(OffsetDateTime.now());
         }
-        return buyerRepository.save(buyer);
+        buyer = buyerMapper.toEntity(buyerDTO);
+        buyer.setId(id);
+        return buyerMapper.toDto(buyerRepository.save(buyer));
     }
 
     @Override
-    public List<Buyer> findAll() {
-        return buyerRepository.findAll();
+    public List<BuyerDTO> findAll() {
+        return buyerRepository.findAll().stream().map(buyerMapper::toDto).toList();
     }
 
     @Override
-    public Buyer findById(UUID id) {
-        return buyerRepository.findById(id).orElse(null);
+    public BuyerDTO findById(UUID id) {
+        return buyerMapper.toDto(buyerRepository.findById(id).orElse(null));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package br.com.b2list.service;
 
-import br.com.b2list.domain.dto.TopBuyerDTO;
+import br.com.b2list.domain.dto.ProductPriceDTO;
 import br.com.b2list.domain.dto.TopProductDTO;
 import br.com.b2list.domain.entity.ProductPrice;
 
@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProductPriceService {
-    ProductPrice save(ProductPrice productPrice);
+    ProductPriceDTO save(ProductPriceDTO productPrice);
 
-    List<ProductPrice> findAll();
+    List<ProductPriceDTO> findAll();
 
-    ProductPrice findById(UUID id);
+    ProductPriceDTO findById(UUID id);
 
     ProductPrice findByProductCodeAndTenantCodeAndWarehouseIdAndEnabledTrue(String code, String tenantCode, UUID warehouseId);
 

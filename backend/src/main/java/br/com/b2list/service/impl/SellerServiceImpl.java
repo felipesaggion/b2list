@@ -1,6 +1,8 @@
 package br.com.b2list.service.impl;
 
+import br.com.b2list.domain.dto.SellerDTO;
 import br.com.b2list.domain.entity.Seller;
+import br.com.b2list.mapper.SellerMapper;
 import br.com.b2list.repository.SellerRepository;
 import br.com.b2list.service.SellerService;
 import br.com.b2list.tenant.TenantContext;
@@ -16,23 +18,33 @@ public class SellerServiceImpl implements SellerService {
     @Autowired
     private SellerRepository sellerRepository;
 
+    @Autowired
+    private SellerMapper sellerMapper;
+
     @Override
-    public Seller save(Seller seller) {
-        seller.setTenantCode(TenantContext.getTenant());
-        if (seller.getId() == null) {
-            seller.setCreatedAt(OffsetDateTime.now());
+    public SellerDTO save(SellerDTO sellerDTO) {
+        sellerDTO.setTenantCode(TenantContext.getTenant());
+        Seller seller = sellerRepository.findByExternalReferenceAndEnabledTrueAndTenantCode(
+                sellerDTO.getExternalReference(),
+                sellerDTO.getTenantCode()
+        );
+        UUID id = seller.getId();
+        if (id == null) {
+            sellerDTO.setCreatedAt(OffsetDateTime.now());
         }
-        return sellerRepository.save(seller);
+        seller = sellerMapper.toEntity(sellerDTO);
+        seller.setId(id);
+        return sellerMapper.toDto(sellerRepository.save(seller));
     }
 
     @Override
-    public List<Seller> findAll() {
-        return sellerRepository.findAll();
+    public List<SellerDTO> findAll() {
+        return sellerRepository.findAll().stream().map(sellerMapper::toDto).toList();
     }
 
     @Override
-    public Seller findById(UUID id) {
-        return sellerRepository.findById(id).orElse(null);
+    public SellerDTO findById(UUID id) {
+        return sellerMapper.toDto(sellerRepository.findById(id).orElse(null));
     }
 
     @Override

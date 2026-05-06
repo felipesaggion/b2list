@@ -18,5 +18,4 @@ public class ErrorResponseDTO {
     private OffsetDateTime timestamp;
 
 
-
 }

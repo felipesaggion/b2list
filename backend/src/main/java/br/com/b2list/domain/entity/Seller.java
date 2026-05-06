@@ -1,6 +1,11 @@
 package br.com.b2list.domain.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;

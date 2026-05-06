@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -30,7 +29,7 @@ public class JwtProvider {
     }
 
 
-    public String generateToken( String username, Map<String, Object> additionalClaims) {
+    public String generateToken(String username, Map<String, Object> additionalClaims) {
         Map<String, Object> claims = new HashMap<>(additionalClaims);
         claims.put("tenant", TenantContext.getTenant());
         return createToken(claims, username);

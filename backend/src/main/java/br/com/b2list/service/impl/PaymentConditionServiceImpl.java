@@ -1,6 +1,8 @@
 package br.com.b2list.service.impl;
 
+import br.com.b2list.domain.dto.PaymentConditionDTO;
 import br.com.b2list.domain.entity.PaymentCondition;
+import br.com.b2list.mapper.PaymentConditionMapper;
 import br.com.b2list.repository.PaymentConditionRepository;
 import br.com.b2list.service.PaymentConditionService;
 import br.com.b2list.tenant.TenantContext;
@@ -15,20 +17,30 @@ public class PaymentConditionServiceImpl implements PaymentConditionService {
     @Autowired
     private PaymentConditionRepository paymentConditionRepository;
 
+    @Autowired
+    private PaymentConditionMapper paymentConditionMapper;
+
     @Override
-    public PaymentCondition save(PaymentCondition paymentCondition) {
-        paymentCondition.setTenantCode(TenantContext.getTenant());
-        return paymentConditionRepository.save(paymentCondition);
+    public PaymentConditionDTO save(PaymentConditionDTO paymentConditionDTO) {
+        paymentConditionDTO.setTenantCode(TenantContext.getTenant());
+        PaymentCondition paymentCondition = paymentConditionRepository.findByCodeAndEnabledTrueAndTenantCode(
+                paymentConditionDTO.getCode(),
+                paymentConditionDTO.getTenantCode()
+        );
+        UUID id = paymentCondition.getId();
+        paymentCondition = paymentConditionMapper.toEntity(paymentConditionDTO);
+        paymentCondition.setId(id);
+        return paymentConditionMapper.toDto(paymentConditionRepository.save(paymentCondition));
     }
 
     @Override
-    public List<PaymentCondition> findAll() {
-        return paymentConditionRepository.findAll();
+    public List<PaymentConditionDTO> findAll() {
+        return paymentConditionRepository.findAll().stream().map(paymentConditionMapper::toDto).toList();
     }
 
     @Override
-    public PaymentCondition findById(UUID id) {
-        return paymentConditionRepository.findById(id).orElse(null);
+    public PaymentConditionDTO findById(UUID id) {
+        return paymentConditionMapper.toDto(paymentConditionRepository.findById(id).orElse(null));
     }
 
     @Override

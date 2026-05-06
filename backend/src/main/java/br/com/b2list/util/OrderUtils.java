@@ -1,19 +1,12 @@
 package br.com.b2list.util;
 
-import br.com.b2list.domain.dto.BuyerDTO;
 import br.com.b2list.domain.dto.ErrorResponseDTO;
 import br.com.b2list.domain.dto.ItemDTO;
-import br.com.b2list.domain.dto.OrderDTO;
-import br.com.b2list.domain.dto.OrderItemDTO;
 import br.com.b2list.domain.dto.OrderRequestDTO;
 import br.com.b2list.domain.dto.OrderResponseDTO;
 import br.com.b2list.domain.dto.OrderResult;
-import br.com.b2list.domain.dto.PaymentConditionDTO;
-import br.com.b2list.domain.dto.SellerDTO;
-import br.com.b2list.domain.dto.WarehouseDTO;
 import br.com.b2list.domain.entity.Buyer;
 import br.com.b2list.domain.entity.Order;
-import br.com.b2list.domain.entity.OrderItem;
 import br.com.b2list.domain.entity.PaymentCondition;
 import br.com.b2list.domain.entity.ProductPrice;
 import br.com.b2list.domain.entity.Seller;
@@ -28,7 +21,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
@@ -134,7 +126,7 @@ public class OrderUtils {
         if (order == null) {
             ErrorResponseDTO errorResponseDTO = ErrorUtil.buildErrorResponse(ORD_VALIDATION_006);
             List<String> details = List.of(
-                    "Order não encontrado pelo external reference: " +externalReference,
+                    "Order não encontrado pelo external reference: " + externalReference,
                     "Ou order não pertence ao tenant: " + TenantContext.getTenant()
             );
             errorResponseDTO.setDetails(details);
@@ -252,76 +244,9 @@ public class OrderUtils {
         return null;
     }
 
-    public static BuyerDTO createBuyerDTO(Order order) {
-        BuyerDTO buyerDTO = new BuyerDTO();
-        buyerDTO.setExternalReference(order.getBuyer().getExternalReference());
-        buyerDTO.setName(order.getBuyer().getName());
-        buyerDTO.setCreditLimit(order.getBuyer().getCreditLimit());
-        buyerDTO.setTenantCode(order.getBuyer().getTenantCode());
-        buyerDTO.setEnabled(order.getBuyer().isEnabled());
-        buyerDTO.setCreatedAt(order.getBuyer().getCreatedAt());
-        buyerDTO.setLastModified(order.getBuyer().getLastModified());
-        buyerDTO.setVersion(order.getBuyer().getVersion());
-        return buyerDTO;
-    }
-
-    public static SellerDTO createSellerDTO(Order order) {
-        SellerDTO sellerDTO = new SellerDTO();
-        sellerDTO.setExternalReference(order.getSeller().getExternalReference());
-        sellerDTO.setName(order.getSeller().getName());
-        sellerDTO.setTenantCode(order.getSeller().getTenantCode());
-        sellerDTO.setEnabled(order.getSeller().isEnabled());
-        sellerDTO.setCreatedAt(order.getSeller().getCreatedAt());
-        return sellerDTO;
-    }
-
-    public static WarehouseDTO createWarehouseDTO(Order order) {
-        WarehouseDTO warehouseDTO = new WarehouseDTO();
-        warehouseDTO.setExternalReference(order.getWarehouse().getExternalReference());
-        warehouseDTO.setName(order.getWarehouse().getName());
-        warehouseDTO.setTenantCode(order.getWarehouse().getTenantCode());
-        warehouseDTO.setEnabled(order.getWarehouse().isEnabled());
-        warehouseDTO.setCreatedAt(order.getWarehouse().getCreatedAt());
-        return warehouseDTO;
-    }
-
-    public static PaymentConditionDTO createPaymentConditionDTO(Order order) {
-        PaymentConditionDTO paymentConditionDTO = new PaymentConditionDTO();
-        paymentConditionDTO.setTenantCode(order.getPaymentCondition().getTenantCode());
-        paymentConditionDTO.setCode(order.getPaymentCondition().getCode());
-        paymentConditionDTO.setDescription(order.getPaymentCondition().getDescription());
-        paymentConditionDTO.setMinOrderValue(order.getPaymentCondition().getMinOrderValue());
-        paymentConditionDTO.setMaxItems(order.getPaymentCondition().getMaxItems());
-        paymentConditionDTO.setAllowBonusOrder(order.getPaymentCondition().getAllowBonusOrder());
-        paymentConditionDTO.setBusinessHoursOnly(order.getPaymentCondition().getBusinessHoursOnly());
-        paymentConditionDTO.setOperationalFeePercent(order.getPaymentCondition().getOperationalFeePercent());
-        paymentConditionDTO.setDiscountPercent(order.getPaymentCondition().getDiscountPercent());
-        paymentConditionDTO.setDiscountExtraPercent(order.getPaymentCondition().getDiscountExtraPercent());
-        paymentConditionDTO.setDiscountCondition(order.getPaymentCondition().getDiscountCondition());
-        paymentConditionDTO.setFreeShippingThreshold(order.getPaymentCondition().getFreeShippingThreshold());
-        paymentConditionDTO.setAlwaysFreeShipping(order.getPaymentCondition().getAlwaysFreeShipping());
-        paymentConditionDTO.setEnabled(order.getPaymentCondition().getEnabled());
-        return paymentConditionDTO;
-    }
-
-    public static List<OrderItemDTO> createListOfItemsDTO(Order order) {
-        List<OrderItemDTO> items = new ArrayList<>();
-        for (OrderItem oi : order.getItems()) {
-            OrderItemDTO orderItemDTO = new OrderItemDTO();
-            orderItemDTO.setProductCode(oi.getProductCode());
-            orderItemDTO.setProductName(oi.getProductName());
-            orderItemDTO.setQuantity(oi.getQuantity());
-            orderItemDTO.setUnitPrice(oi.getUnitPrice());
-            orderItemDTO.setListPrice(oi.getListPrice());
-            orderItemDTO.setSubtotal(oi.getSubtotal());
-            items.add(orderItemDTO);
-        }
-        return items;
-    }
-
     public static ResponseEntity<ErrorResponseDTO> checkIfOrderIsAlreadyCanceled(String externalReference, Order order) {
         if (order.getStatus() == OrderStatus.CANCELLED) {
-            ErrorResponseDTO errorResponseDTO  = ErrorUtil.buildErrorResponse(Error.ORD_STATUS_001);
+            ErrorResponseDTO errorResponseDTO = ErrorUtil.buildErrorResponse(Error.ORD_STATUS_001);
             errorResponseDTO.setDetails(List.of(
                     "O pedido com referência " + externalReference + " já foi cancelado anteriormente"
             ));
@@ -329,29 +254,6 @@ public class OrderUtils {
             return ResponseEntity.badRequest().body(errorResponseDTO);
         }
         return null;
-    }
-
-    public static OrderDTO convertOrderToOrderDTO(Order order) {
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setCode(order.getCode());
-        orderDTO.setExternalReference(order.getExternalReference());
-        orderDTO.setStatus(order.getStatus());
-        orderDTO.setSubtotal(order.getSubtotal());
-        orderDTO.setDiscountValue(order.getDiscountValue());
-        orderDTO.setTotal(order.getTotal());
-        orderDTO.setOrigin(order.getOrigin());
-        orderDTO.setTenantCode(order.getTenantCode());
-        orderDTO.setCreatedAt(order.getCreatedAt());
-        orderDTO.setLastModified(order.getLastModified());
-        orderDTO.setVersion(order.getVersion());
-
-        orderDTO.setBuyer(createBuyerDTO(order));
-        orderDTO.setSeller(createSellerDTO(order));
-        orderDTO.setWarehouse(createWarehouseDTO(order));
-        orderDTO.setPaymentCondition(createPaymentConditionDTO(order));
-
-        orderDTO.setItems(createListOfItemsDTO(order));
-        return orderDTO;
     }
 
     /**

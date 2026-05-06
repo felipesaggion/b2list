@@ -4,8 +4,12 @@ import java.math.BigDecimal;
 
 public interface OrderSummaryProjection {
     Long getTotalOrders();
+
     Long getConfirmedOrders();
+
     Long getCancelledOrders();
+
     BigDecimal getTotalRevenue();
+
     BigDecimal getAverageOrderValue();
 }

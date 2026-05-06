@@ -40,13 +40,13 @@ public class OrderController {
             @RequestParam OffsetDateTime endDate) {
 
         return orderService.listPaginated(
-                        startDate,
-                        endDate,
-                        status,
-                        buyerRef,
-                        TenantContext.getTenant(),
-                        page,
-                        size
+                startDate,
+                endDate,
+                status,
+                buyerRef,
+                TenantContext.getTenant(),
+                page,
+                size
         );
     }
 

@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class B2listApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(B2listApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(B2listApplication.class, args);
+    }
 }

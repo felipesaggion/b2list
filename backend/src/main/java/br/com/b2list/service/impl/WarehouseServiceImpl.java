@@ -1,6 +1,8 @@
 package br.com.b2list.service.impl;
 
+import br.com.b2list.domain.dto.WarehouseDTO;
 import br.com.b2list.domain.entity.Warehouse;
+import br.com.b2list.mapper.WarehouseMapper;
 import br.com.b2list.repository.WarehouseRepository;
 import br.com.b2list.service.WarehouseService;
 import br.com.b2list.tenant.TenantContext;
@@ -17,23 +19,34 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Autowired
     private WarehouseRepository warehouseRepository;
 
+    @Autowired
+    private WarehouseMapper warehouseMapper;
+
     @Override
-    public Warehouse save(Warehouse warehouse) {
-        warehouse.setTenantCode(TenantContext.getTenant());
-        if (warehouse.getId() == null) {
-            warehouse.setCreatedAt(OffsetDateTime.now());
+    public WarehouseDTO save(WarehouseDTO warehouseDTO) {
+        warehouseDTO.setTenantCode(TenantContext.getTenant());
+        Warehouse warehouse = warehouseRepository.findByExternalReferenceAndEnabledTrueAndTenantCodeAndSellerId(
+                warehouseDTO.getExternalReference(),
+                warehouseDTO.getTenantCode(),
+                warehouseDTO.getSellerId()
+        );
+        UUID id = warehouse.getId();
+        if (id == null) {
+            warehouseDTO.setCreatedAt(OffsetDateTime.now());
         }
-        return warehouseRepository.save(warehouse);
+        warehouse = warehouseMapper.toEntity(warehouseDTO);
+        warehouse.setId(id);
+        return warehouseMapper.toDto(warehouseRepository.save(warehouse));
     }
 
     @Override
-    public List<Warehouse> findAll() {
-        return warehouseRepository.findAll();
+    public List<WarehouseDTO> findAll() {
+        return warehouseRepository.findAll().stream().map(warehouseMapper::toDto).toList();
     }
 
     @Override
-    public Warehouse findById(UUID id) {
-        return warehouseRepository.findById(id).orElse(null);
+    public WarehouseDTO findById(UUID id) {
+        return warehouseMapper.toDto(warehouseRepository.findById(id).orElse(null));
     }
 
     @Override

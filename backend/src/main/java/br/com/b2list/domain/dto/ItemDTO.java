@@ -10,5 +10,4 @@ import lombok.Setter;
 public class ItemDTO {
     private String productCode;
     private int quantity;
-
 }

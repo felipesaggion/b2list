@@ -1,7 +1,9 @@
 package br.com.b2list.service.impl;
 
+import br.com.b2list.domain.dto.ProductPriceDTO;
 import br.com.b2list.domain.dto.TopProductDTO;
 import br.com.b2list.domain.entity.ProductPrice;
+import br.com.b2list.mapper.ProductPriceMapper;
 import br.com.b2list.repository.ProductPriceRepository;
 import br.com.b2list.service.ProductPriceService;
 import br.com.b2list.tenant.TenantContext;
@@ -18,21 +20,34 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     @Autowired
     private ProductPriceRepository productPriceRepository;
 
+    @Autowired
+    private ProductPriceMapper productPriceMapper;
+
     @Override
-    public ProductPrice save(ProductPrice productPrice) {
-        productPrice.setTenantCode(TenantContext.getTenant());
-        productPrice.setLastModified(OffsetDateTime.now());
-        return productPriceRepository.save(productPrice);
+    public ProductPriceDTO save(ProductPriceDTO productPriceDTO) {
+        ProductPrice productPrice = productPriceRepository.findByProductCodeAndTenantCodeAndWarehouseIdAndEnabledTrue(
+                productPriceDTO.getProductCode(),
+                productPriceDTO.getTenantCode(),
+                productPriceDTO.getWarehouseId()
+        );
+        UUID id = productPrice.getId();
+        if (id == null) {
+            productPriceDTO.setTenantCode(TenantContext.getTenant());
+            productPriceDTO.setLastModified(OffsetDateTime.now());
+        }
+        productPrice = productPriceMapper.toEntity(productPriceDTO);
+        productPrice.setId(id);
+        return productPriceMapper.toDto(productPriceRepository.save(productPrice));
     }
 
     @Override
-    public List<ProductPrice> findAll() {
-        return productPriceRepository.findAll();
+    public List<ProductPriceDTO> findAll() {
+        return productPriceRepository.findAll().stream().map(productPriceMapper::toDto).toList();
     }
 
     @Override
-    public ProductPrice findById(UUID id) {
-        return productPriceRepository.findById(id).orElse(null);
+    public ProductPriceDTO findById(UUID id) {
+        return productPriceMapper.toDto(productPriceRepository.findById(id).orElse(null));
     }
 
     @Override

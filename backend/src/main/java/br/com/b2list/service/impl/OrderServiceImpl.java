@@ -2,6 +2,8 @@ package br.com.b2list.service.impl;
 
 import br.com.b2list.domain.dto.ErrorResponseDTO;
 import br.com.b2list.domain.dto.ItemDTO;
+import br.com.b2list.domain.dto.OrderDTO;
+import br.com.b2list.domain.dto.OrderItemDTO;
 import br.com.b2list.domain.dto.OrderPageResponseDTO;
 import br.com.b2list.domain.dto.OrderRequestDTO;
 import br.com.b2list.domain.dto.OrderResponseDTO;
@@ -20,6 +22,11 @@ import br.com.b2list.domain.entity.Warehouse;
 import br.com.b2list.enums.Error;
 import br.com.b2list.enums.OrderStatus;
 import br.com.b2list.event.OrderPayload;
+import br.com.b2list.mapper.BuyerMapper;
+import br.com.b2list.mapper.OrderMapper;
+import br.com.b2list.mapper.PaymentConditionMapper;
+import br.com.b2list.mapper.SellerMapper;
+import br.com.b2list.mapper.WarehouseMapper;
 import br.com.b2list.producer.OrderEventProducer;
 import br.com.b2list.projection.OrderListingProjection;
 import br.com.b2list.projection.OrderSummaryProjection;
@@ -41,7 +48,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -51,7 +57,6 @@ import java.util.UUID;
 import static br.com.b2list.util.OrderUtils.checkIfOrderIsAlreadyCanceled;
 import static br.com.b2list.util.OrderUtils.checkIfOrderIsPresent;
 import static br.com.b2list.util.OrderUtils.checkIfTenantIsPresent;
-import static br.com.b2list.util.OrderUtils.convertOrderToOrderDTO;
 
 @Service
 @Slf4j
@@ -81,11 +86,20 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderEventProducer orderEventProducer;
 
-    @GetMapping
-    public ResponseEntity<?> findAllPaginated() {
+    @Autowired
+    public OrderMapper orderMapper;
 
-        return null;
-    }
+    @Autowired
+    private BuyerMapper buyerMapper;
+
+    @Autowired
+    private SellerMapper sellerMapper;
+
+    @Autowired
+    private WarehouseMapper warehouseMapper;
+
+    @Autowired
+    private PaymentConditionMapper paymentConditionMapper;
 
     @Override
     @Transactional
@@ -372,5 +386,24 @@ public class OrderServiceImpl implements OrderService {
                 topBuyers,
                 topProducts
         );
+    }
+
+    public OrderDTO convertOrderToOrderDTO(Order order) {
+        OrderDTO orderDTO = orderMapper.toDto(order);
+
+        List<OrderItemDTO> items = new ArrayList<>();
+
+        for (OrderItem item : order.getItems()) {
+            OrderItemDTO itemDTO = orderMapper.toDto(item);
+            items.add(itemDTO);
+        }
+
+        orderDTO.setItems(items);
+
+        orderDTO.setBuyer(buyerMapper.toDto(order.getBuyer()));
+        orderDTO.setSeller(sellerMapper.toDto(order.getSeller()));
+        orderDTO.setWarehouse(warehouseMapper.toDto(order.getWarehouse()));
+        orderDTO.setPaymentCondition(paymentConditionMapper.toDto(order.getPaymentCondition()));
+        return orderDTO;
     }
 }

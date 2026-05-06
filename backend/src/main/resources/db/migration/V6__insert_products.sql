@@ -49,7 +49,8 @@ VALUES ('PROD-001', 'Laptop Model A', '6ae7a630-c78c-4963-ac09-074b919f04ac', 12
 
        ('PROD-041', 'Smart TV 55"', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 700.0000, 900.0000, 'TEN001', true),
        ('PROD-042', 'Soundbar System', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 150.0000, 200.0000, 'TEN001', true),
-       ('PROD-043', 'Home Theater Projector', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 400.0000, 550.0000, 'TEN001', true),
+       ('PROD-043', 'Home Theater Projector', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 400.0000, 550.0000, 'TEN001',
+        true),
        ('PROD-044', 'Streaming Device', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 50.0000, 70.0000, 'TEN001', true),
        ('PROD-045', 'Gaming Laptop Pro', 'f5ebb7db-84c1-4b22-a87f-1e9737b8ab51', 1500.0000, 2000.0000, 'TEN001', true),
 

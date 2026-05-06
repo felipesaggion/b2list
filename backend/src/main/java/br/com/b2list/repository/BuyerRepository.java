@@ -20,10 +20,6 @@ public interface BuyerRepository extends JpaRepository<Buyer, UUID> {
     @Query("SELECT b FROM Buyer b WHERE b.id = :id")
     Optional<Buyer> findByIdWithLock(@Param("id") UUID id);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT b FROM Buyer b WHERE b.id = :id AND b.tenantCode = :tenantCode")
-    Optional<Buyer> findByIdAndTenantCodeWithLock(@Param("id") UUID id, @Param("tenantCode") String tenantCode);
-
     @Query("""
                 SELECT new br.com.b2list.domain.dto.TopBuyerDTO(
                     b.name,
@@ -40,3 +36,4 @@ public interface BuyerRepository extends JpaRepository<Buyer, UUID> {
             """)
     List<TopBuyerDTO> findTopBuyers(String tenant, OffsetDateTime from, OffsetDateTime to);
 }
+
