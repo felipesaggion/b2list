@@ -23,6 +23,7 @@ public class OrderResponseDTO {
         private String status;
         private BigDecimal subtotal;
         private BigDecimal discountValue;
+        private BigDecimal operationalFee;
         private BigDecimal total;
         private Integer itemCount;
         private ValidationDTO validation;

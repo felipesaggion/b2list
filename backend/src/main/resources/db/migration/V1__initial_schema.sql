@@ -65,23 +65,22 @@ CREATE TABLE product_price
 -- Condições de pagamento
 CREATE TABLE payment_condition
 (
-    id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_code             VARCHAR(50)  NOT NULL,          -- Identifica o tenant
-    code                    VARCHAR(50)  NOT NULL,          -- Código da condição
-    description             VARCHAR(255) NOT NULL,          -- Descrição
-    min_order_value         DECIMAL(15, 2)   DEFAULT 0,     -- Valor mínimo do pedido
-    max_items               INT              DEFAULT NULL,  -- Máximo de itens
-    allow_bonus_order       BOOLEAN          DEFAULT false, -- Permite pedido bônus
-    business_hours_only     BOOLEAN          DEFAULT false, -- Bloqueia fora do horário comercial
-    operational_fee_percent DECIMAL(5, 2)    DEFAULT 0,     -- Taxa operacional (%)
-    discount_percent        DECIMAL(5, 2)    DEFAULT 0,     -- Desconto padrão (%)
-    discount_extra_percent  DECIMAL(5, 2)    DEFAULT 0,     -- Desconto extra (ex: à vista)
-    discount_condition      VARCHAR(255)     DEFAULT NULL,  -- Regra do desconto extra
-    free_shipping_threshold DECIMAL(15, 2)   DEFAULT 0,     -- Valor para frete grátis
-    always_free_shipping    BOOLEAN          DEFAULT false, -- Frete sempre grátis
-    enabled                 BOOLEAN          DEFAULT true,
+    id                         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code                       VARCHAR(50)  NOT NULL,
+    description                VARCHAR(255) NOT NULL,
+    max_installments           INTEGER          DEFAULT 1,
+    discount_percentage        DECIMAL(5, 2)    DEFAULT 0.00,
+    extra_discount_percentage  DECIMAL(5, 2)    DEFAULT 0.00,
+    tenant_code                VARCHAR(50)  NOT NULL,
+    operational_fee_percentage DECIMAL(5, 2)    DEFAULT 0.00,
+    min_value                  DECIMAL(15, 2)   default 0.00,
+    max_items                  INTEGER          DEFAULT 100,
+    allow_only_business_hours  BOOLEAN          DEFAULT FALSE,
+    allow_bonus                BOOLEAN          DEFAULT FALSE,
+    free_shipping_threshold    DECIMAL(15, 2)   default 0.00,
+    enabled                    BOOLEAN          DEFAULT TRUE,
 
-    CONSTRAINT uq_payment_condition_tenant_code_code UNIQUE (tenant_code, code)
+    UNIQUE (tenant_code, code)
 );
 
 -- Pedidos
@@ -98,6 +97,7 @@ CREATE TABLE "order"
     subtotal             DECIMAL(15, 2)      NOT NULL,
     discount_value       DECIMAL(15, 2)               DEFAULT 0,
     total                DECIMAL(15, 2)      NOT NULL,
+    operational_fee      DECIMAL(5, 2)       NOT NULL DEFAULT 0.00,
     origin               VARCHAR(30)         NOT NULL DEFAULT 'API',
     tenant_code          VARCHAR(50)         NOT NULL,
     created_at           TIMESTAMP WITH TIME ZONE     DEFAULT now(),

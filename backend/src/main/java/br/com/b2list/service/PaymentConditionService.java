@@ -4,6 +4,7 @@ import br.com.b2list.domain.dto.PaymentConditionDTO;
 import br.com.b2list.domain.entity.PaymentCondition;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface PaymentConditionService {
@@ -12,6 +13,8 @@ public interface PaymentConditionService {
     List<PaymentConditionDTO> findAll();
 
     PaymentConditionDTO findById(UUID id);
+
+    Optional<PaymentCondition> findByTenantCodeAndCode(String tenantCode, String code);
 
     PaymentCondition findByCodeAndEnabledTrueAndTenantCode(String externalReference, String tenantCode);
 

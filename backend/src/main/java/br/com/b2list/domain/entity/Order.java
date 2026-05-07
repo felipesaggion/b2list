@@ -84,6 +84,9 @@ public class Order {
     @Column(name = "version", nullable = false)
     private Long version = 0L;
 
+    @Column(name = "operational_fee", nullable = false)
+    private BigDecimal operationalFee = BigDecimal.ZERO;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> items = new ArrayList<>();
 
@@ -224,6 +227,14 @@ public class Order {
 
     public void setItems(List<OrderItem> items) {
         this.items = items;
+    }
+
+    public BigDecimal getOperationalFee() {
+        return operationalFee;
+    }
+
+    public void setOperationalFee(BigDecimal operationalFee) {
+        this.operationalFee = operationalFee;
     }
 
     public void addItem(OrderItem item) {

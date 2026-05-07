@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -41,6 +42,11 @@ public class PaymentConditionServiceImpl implements PaymentConditionService {
     @Override
     public PaymentConditionDTO findById(UUID id) {
         return paymentConditionMapper.toDto(paymentConditionRepository.findById(id).orElse(null));
+    }
+
+    @Override
+    public Optional<PaymentCondition> findByTenantCodeAndCode(String tenantCode, String code) {
+        return paymentConditionRepository.findByTenantCodeAndCode(tenantCode, code);
     }
 
     @Override

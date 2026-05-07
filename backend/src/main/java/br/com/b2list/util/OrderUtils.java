@@ -41,7 +41,11 @@ public class OrderUtils {
         return orderOrigin;
     }
 
-    public static OrderResponseDTO populateOrderResponseDTO(Order orderSaved, PaymentCondition paymentCondition, OrderResult orderResult) {
+    public static OrderResponseDTO populateOrderResponseDTO(
+            Order orderSaved,
+            PaymentCondition paymentCondition,
+            OrderResponseDTO.DiscountDTO discountDTO
+    ) {
         OrderResponseDTO orderResponseDTO = new OrderResponseDTO();
         orderResponseDTO.setCode(orderSaved.getCode());
         orderResponseDTO.setMessage("Pedido criado com sucesso");
@@ -58,12 +62,14 @@ public class OrderUtils {
         dataDTO.setExternalReference(orderSaved.getExternalReference());
         dataDTO.setStatus(orderSaved.getStatus().name());
         dataDTO.setSubtotal(orderSaved.getSubtotal());
-        dataDTO.setDiscountValue(orderSaved.getSubtotal().subtract(orderSaved.getTotal()));
+        dataDTO.setOperationalFee(orderSaved.getOperationalFee());
+        dataDTO.setDiscountValue(orderSaved.getDiscountValue());
         dataDTO.setTotal(orderSaved.getTotal());
         dataDTO.setItemCount(orderSaved.getItems().size());
         dataDTO.setValidation(validationDTO);
         dataDTO.setPricing(pricingDTO);
-        dataDTO.setDiscount(orderResult.getDiscountDTO());
+
+        dataDTO.setDiscount(discountDTO);
 
         orderResponseDTO.setData(dataDTO);
         return orderResponseDTO;

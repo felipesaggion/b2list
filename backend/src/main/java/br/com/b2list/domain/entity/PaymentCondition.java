@@ -1,72 +1,59 @@
 package br.com.b2list.domain.entity;
 
 import jakarta.persistence.Column;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table(name = "payment_condition",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uq_payment_condition_tenant_code_code",
-                        columnNames = {"tenant_code", "code"})
-        })
 public class PaymentCondition {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
+
+    @Column(nullable = false, length = 50)
+    private String code;
+
+    @Column(nullable = false, length = 255)
+    private String description;
+
+    @Column(name = "max_installments")
+    private Integer maxInstallments;
+
+    @Column(name = "discount_percentage", precision = 5, scale = 2)
+    private BigDecimal discountPercentage;
+
+    @Column(name = "extra_discount_percentage", precision = 5, scale = 2)
+    private BigDecimal extraDiscountPercentage;
 
     @Column(name = "tenant_code", nullable = false, length = 50)
     private String tenantCode;
 
-    @Column(name = "code", nullable = false, length = 50)
-    private String code;
+    @Column(name = "operational_fee_percentage", precision = 5, scale = 2)
+    private BigDecimal operationalFeePercentage;
 
-    @Column(nullable = false)
-    private String description;
-
-    @Column(name = "min_order_value", precision = 15, scale = 2)
-    private BigDecimal minOrderValue = BigDecimal.ZERO;
+    @Column(name = "min_value", precision = 15, scale = 2)
+    private BigDecimal minValue;
 
     @Column(name = "max_items")
     private Integer maxItems;
 
-    @Column(name = "allow_bonus_order")
-    private Boolean allowBonusOrder = false;
+    @Column(name = "allow_only_business_hours")
+    private Boolean allowOnlyBusinessHours;
 
-    @Column(name = "business_hours_only")
-    private Boolean businessHoursOnly = false;
-
-    @Column(name = "operational_fee_percent", precision = 5, scale = 2)
-    private BigDecimal operationalFeePercent = BigDecimal.ZERO;
-
-    @Column(name = "discount_percent", precision = 5, scale = 2)
-    private BigDecimal discountPercent = BigDecimal.ZERO;
-
-    @Column(name = "discount_extra_percent", precision = 5, scale = 2)
-    private BigDecimal discountExtraPercent = BigDecimal.ZERO;
-
-    @Column(name = "discount_condition", length = 255)
-    private String discountCondition;
+    @Column(name = "allow_bonus")
+    private Boolean allowBonus;
 
     @Column(name = "free_shipping_threshold", precision = 15, scale = 2)
-    private BigDecimal freeShippingThreshold = BigDecimal.ZERO;
+    private BigDecimal freeShippingThreshold;
 
-    @Column(name = "always_free_shipping")
-    private Boolean alwaysFreeShipping = false;
-
-    @Column(name = "enabled")
-    private Boolean enabled = true;
-
-    public PaymentCondition() {
-    }
+    @Column(nullable = false)
+    private Boolean enabled;
 
     public UUID getId() {
         return id;
@@ -74,14 +61,6 @@ public class PaymentCondition {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public String getTenantCode() {
-        return tenantCode;
-    }
-
-    public void setTenantCode(String tenantCode) {
-        this.tenantCode = tenantCode;
     }
 
     public String getCode() {
@@ -100,12 +79,52 @@ public class PaymentCondition {
         this.description = description;
     }
 
-    public BigDecimal getMinOrderValue() {
-        return minOrderValue;
+    public Integer getMaxInstallments() {
+        return maxInstallments;
     }
 
-    public void setMinOrderValue(BigDecimal minOrderValue) {
-        this.minOrderValue = minOrderValue;
+    public void setMaxInstallments(Integer maxInstallments) {
+        this.maxInstallments = maxInstallments;
+    }
+
+    public BigDecimal getDiscountPercentage() {
+        return discountPercentage;
+    }
+
+    public void setDiscountPercentage(BigDecimal discountPercentage) {
+        this.discountPercentage = discountPercentage;
+    }
+
+    public BigDecimal getExtraDiscountPercentage() {
+        return extraDiscountPercentage;
+    }
+
+    public void setExtraDiscountPercentage(BigDecimal extraDiscountPercentage) {
+        this.extraDiscountPercentage = extraDiscountPercentage;
+    }
+
+    public String getTenantCode() {
+        return tenantCode;
+    }
+
+    public void setTenantCode(String tenantCode) {
+        this.tenantCode = tenantCode;
+    }
+
+    public BigDecimal getOperationalFeePercentage() {
+        return operationalFeePercentage;
+    }
+
+    public void setOperationalFeePercentage(BigDecimal operationalFeePercentage) {
+        this.operationalFeePercentage = operationalFeePercentage;
+    }
+
+    public BigDecimal getMinValue() {
+        return minValue;
+    }
+
+    public void setMinValue(BigDecimal minValue) {
+        this.minValue = minValue;
     }
 
     public Integer getMaxItems() {
@@ -116,52 +135,20 @@ public class PaymentCondition {
         this.maxItems = maxItems;
     }
 
-    public Boolean getAllowBonusOrder() {
-        return allowBonusOrder;
+    public Boolean getAllowOnlyBusinessHours() {
+        return allowOnlyBusinessHours;
     }
 
-    public void setAllowBonusOrder(Boolean allowBonusOrder) {
-        this.allowBonusOrder = allowBonusOrder;
+    public void setAllowOnlyBusinessHours(Boolean allowOnlyBusinessHours) {
+        this.allowOnlyBusinessHours = allowOnlyBusinessHours;
     }
 
-    public Boolean getBusinessHoursOnly() {
-        return businessHoursOnly;
+    public Boolean getAllowBonus() {
+        return allowBonus;
     }
 
-    public void setBusinessHoursOnly(Boolean businessHoursOnly) {
-        this.businessHoursOnly = businessHoursOnly;
-    }
-
-    public BigDecimal getOperationalFeePercent() {
-        return operationalFeePercent;
-    }
-
-    public void setOperationalFeePercent(BigDecimal operationalFeePercent) {
-        this.operationalFeePercent = operationalFeePercent;
-    }
-
-    public BigDecimal getDiscountPercent() {
-        return discountPercent;
-    }
-
-    public void setDiscountPercent(BigDecimal discountPercent) {
-        this.discountPercent = discountPercent;
-    }
-
-    public BigDecimal getDiscountExtraPercent() {
-        return discountExtraPercent;
-    }
-
-    public void setDiscountExtraPercent(BigDecimal discountExtraPercent) {
-        this.discountExtraPercent = discountExtraPercent;
-    }
-
-    public String getDiscountCondition() {
-        return discountCondition;
-    }
-
-    public void setDiscountCondition(String discountCondition) {
-        this.discountCondition = discountCondition;
+    public void setAllowBonus(Boolean allowBonus) {
+        this.allowBonus = allowBonus;
     }
 
     public BigDecimal getFreeShippingThreshold() {
@@ -170,14 +157,6 @@ public class PaymentCondition {
 
     public void setFreeShippingThreshold(BigDecimal freeShippingThreshold) {
         this.freeShippingThreshold = freeShippingThreshold;
-    }
-
-    public Boolean getAlwaysFreeShipping() {
-        return alwaysFreeShipping;
-    }
-
-    public void setAlwaysFreeShipping(Boolean alwaysFreeShipping) {
-        this.alwaysFreeShipping = alwaysFreeShipping;
     }
 
     public Boolean getEnabled() {

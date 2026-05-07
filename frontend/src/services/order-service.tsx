@@ -53,7 +53,7 @@ export const cancelOrder = async (externalReference: string) => {
         api.defaults.headers.common['x-tenant'] = tenantCode;
         api.defaults.headers.common['x-origin'] = "API";
 
-        await api.get(`/order/${externalReference}/cancel`);
+        await api.post(`/order/${externalReference}/cancel`);
     } catch (error: unknown) {
         throw error;
     }

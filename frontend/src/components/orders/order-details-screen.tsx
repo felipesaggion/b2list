@@ -184,11 +184,11 @@ const OrderDetailsScreen: React.FC = () => {
                                 <Divider sx={{ my: 1.5 }} />
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                                     <Typography variant="body2">Desconto Base:</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{order.paymentCondition.discountPercent}%</Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{order.paymentCondition.discountPercentage}%</Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <Typography variant="body2">Extra:</Typography>
-                                    <Typography variant="body2" color="success.main">{order.paymentCondition.discountExtraPercent}%</Typography>
+                                    <Typography variant="body2" color="success.main">{order.paymentCondition.extraDiscountPercentage}%</Typography>
                                 </Box>
                             </CardContent>
                         </Card>

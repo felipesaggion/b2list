@@ -42,6 +42,8 @@ spring:
           url: ${spring.datasource.url}
 logging:
   level:
+    root: INFO # Default for everything else
+    br.com.b2list: INFO # More detailed logs for your application
     org.flywaydb: INFO
     org.hibernate.orm.connections: INFO
 jwt:

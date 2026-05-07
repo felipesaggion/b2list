@@ -7,7 +7,6 @@ import br.com.b2list.domain.dto.OrderItemDTO;
 import br.com.b2list.domain.dto.OrderPageResponseDTO;
 import br.com.b2list.domain.dto.OrderRequestDTO;
 import br.com.b2list.domain.dto.OrderResponseDTO;
-import br.com.b2list.domain.dto.OrderResult;
 import br.com.b2list.domain.dto.PeriodDTO;
 import br.com.b2list.domain.dto.StatisticsDTO;
 import br.com.b2list.domain.dto.TopBuyerDTO;
@@ -43,6 +42,7 @@ import br.com.b2list.util.OrderUtils;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -81,9 +81,6 @@ public class OrderServiceImpl implements OrderService {
     private ProductPriceService productPriceService;
 
     @Autowired
-    private GenericPaymentCalculator genericPaymentCalculator;
-
-    @Autowired
     private OrderEventProducer orderEventProducer;
 
     @Autowired
@@ -101,8 +98,11 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private PaymentConditionMapper paymentConditionMapper;
 
+    @Autowired
+    private OrderRuleEngine orderRuleEngine;
+
     @Override
-    @Transactional
+    @Transactional(rollbackOn = DataIntegrityViolationException.class)
     public ResponseEntity<?> create(OrderRequestDTO orderRequestDTO) {
         String tenant = TenantContext.getTenant();
 
@@ -186,19 +186,19 @@ public class OrderServiceImpl implements OrderService {
         if (errorResponse != null) return errorResponse;
 
         order.setItems(orderItems);
+        order.setTotal(order.getSubtotal());
 
-        OrderResult orderResult = genericPaymentCalculator.process(order, paymentCondition);
+        OrderResponseDTO.DiscountDTO discountDTO = orderRuleEngine.processOrder(order, tenant, paymentCondition.getCode());
 
-        order.setTotal(orderResult.getTotal());
-        order.setDiscountValue(order.getSubtotal().subtract(order.getTotal()));
         order.setStatus(OrderStatus.COMPLETED);
         order.setCode(generateCode());
-        Order orderSaved = save(order);
 
-        if (!orderResult.getAllowBonusOrder()) {
-            ResponseEntity<ErrorResponseDTO> errorResponseDTO = decreaseBuyersLimit(orderSaved, buyer);
+        if (!paymentCondition.getAllowBonus()) {
+            ResponseEntity<ErrorResponseDTO> errorResponseDTO = decreaseBuyersLimit(order, buyer);
             if (errorResponseDTO != null) return errorResponseDTO;
         }
+
+        Order orderSaved = save(order);
 
         UUID correlationId = UUID.randomUUID();
 
@@ -212,29 +212,20 @@ public class OrderServiceImpl implements OrderService {
         orderEventProducer.publishOrderCreatedEvent(payload, tenant, correlationId);
         log.info("Evento ORDER_CREATED publicado para o pedido: {}, correlationId: {}", payload.getOrderId(), correlationId);
 
-        OrderResponseDTO orderResponseDTO = OrderUtils.populateOrderResponseDTO(orderSaved, paymentCondition, orderResult);
+        OrderResponseDTO orderResponseDTO = OrderUtils.populateOrderResponseDTO(orderSaved, paymentCondition, discountDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponseDTO);
     }
 
-    public ResponseEntity<ErrorResponseDTO> decreaseBuyersLimit(Order orderSaved, Buyer buyer) {
+    public ResponseEntity<ErrorResponseDTO> decreaseBuyersLimit(Order order, Buyer buyer) {
         try {
-            log.info("Iniciando decremento atômico de crédito para pedido: {}", orderSaved.getCode());
-            buyerService.decrementCreditAtomically(buyer.getId(), orderSaved.getTotal());
-            log.info("Crédito decrementado com sucesso após aprovação do pedido: {}", orderSaved.getCode());
+            log.info("Iniciando decremento atômico de crédito para pedido: {}", order.getCode());
+            buyerService.decrementCreditAtomically(buyer.getId(), order.getTotal());
+            log.info("Crédito decrementado com sucesso após aprovação do pedido: {}", order.getCode());
         } catch (IllegalStateException ex) {
             log.error("Erro ao decrementar crédito: {}", ex.getMessage());
-            orderSaved.setStatus(OrderStatus.PENDING);
-            save(orderSaved);
-
-            ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO();
-            errorResponseDTO.setStatus(HttpStatus.UNPROCESSABLE_ENTITY.value());
-            errorResponseDTO.setMessage("Falha ao processar crédito: " + ex.getMessage());
-            errorResponseDTO.setDetails(List.of(
-                    "O pedido foi criado mas a aprovação de crédito falhou",
-                    "Mensagem: " + ex.getMessage()
-            ));
-            return ResponseEntity.unprocessableEntity().body(errorResponseDTO);
+            order.setStatus(OrderStatus.PENDING);
+            throw ex;
         }
         return null;
     }
@@ -331,7 +322,7 @@ public class OrderServiceImpl implements OrderService {
 
         Buyer buyer = order.getBuyer();
 
-        if (!order.getPaymentCondition().getAllowBonusOrder()) {
+        if (!order.getPaymentCondition().getAllowBonus()) {
             ResponseEntity<ErrorResponseDTO> errorResponseDTO = increaseBuyersLimit(order, buyer.getId());
             if (errorResponseDTO != null) return errorResponseDTO;
         }

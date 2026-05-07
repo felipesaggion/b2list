@@ -36,4 +36,13 @@ public class GlobalExceptionHandler {
         log.error(ToStringBuilder.reflectionToString(error, ToStringStyle.MULTI_LINE_STYLE));
         return ResponseEntity.unprocessableEntity().body(error);
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponseDTO> handleIllegalStateException(IllegalStateException ex) {
+        ErrorResponseDTO error = ErrorUtil.buildErrorResponse(Error.ORD_VALIDATION_003);
+        List<String> details = List.of(ex.getMessage());
+        error.setDetails(details);
+        log.error(ToStringBuilder.reflectionToString(error, ToStringStyle.MULTI_LINE_STYLE));
+        return ResponseEntity.unprocessableEntity().body(error);
+    }
 }
