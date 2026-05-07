@@ -8,6 +8,7 @@ import OrderDetailsScreen from './components/orders/order-details-screen.tsx'
 import StatisticsDashboard from './components/dashboard/statistics-dashboard.tsx'
 import Layout from './components/layout/layout.tsx'
 import Logout from './components/login/logout.tsx'
+import OrderNew from './components/orders/order-new.tsx'
 
 const darkTheme = createTheme({
   palette: {
@@ -22,6 +23,7 @@ createRoot(document.getElementById('root')!).render(
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<StatisticsDashboard />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/orders/new" element={<OrderNew />} />
           <Route path="/orders/:externalReference" element={<OrderDetailsScreen />} />
         </Route>
         <Route path="/" element={<Login />} />

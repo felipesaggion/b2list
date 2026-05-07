@@ -1,5 +1,5 @@
 import type { Buyer } from "./buyer";
-import type { OrderItem } from "./order-item";
+import type { OrderDetailItem } from "./order-detail-item";
 import type { PaymentCondition } from "./payment-condition";
 import type { Seller } from "./seller";
 import type { Warehouse } from "./warehouse";
@@ -20,5 +20,5 @@ export interface OrderDetails {
     createdAt: string;
     lastModified: string;
     version: number;
-    items: OrderItem[];
+    items: OrderDetailItem[];
 }

@@ -15,7 +15,7 @@ import {
     useMediaQuery,
     useTheme
 } from '@mui/material';
-import { Visibility, Cancel, FilterList } from '@mui/icons-material';
+import { Visibility, Cancel, FilterList, Add } from '@mui/icons-material';
 
 import { cancelOrder, getOrdersPaginated } from '../../services/order-service';
 import type OrderFilters from '../../models/order-filters';
@@ -150,7 +150,30 @@ const Orders: React.FC = () => {
             boxSizing: 'border-box',
             overflowX: 'hidden'
         }}>
-            {/* --- FILTROS --- */}
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mb: 3
+            }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
+                    Pedidos
+                </Typography>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<Add />}
+                    onClick={() => navigate('/orders/new')} // Ajuste a rota se necessário
+                    sx={{
+                        borderRadius: 2,
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                        color: '#FFF'
+                    }}
+                >
+                    Novo Pedido
+                </Button>
+            </Box>
             <Paper elevation={0} sx={{ p: 2, mb: 3, borderRadius: 2, border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'background.paper' }}>
                 <Grid container spacing={2}>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
