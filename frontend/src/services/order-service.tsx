@@ -7,7 +7,7 @@ export const getOrdersPaginated = async (size: number, page: number, filters: Or
     try {
         const params = new URLSearchParams();
 
-        if (filters.status) params.append('status', filters.status);
+        if (filters.status) params.append('status', filters.status === 'ALL' ? '' : filters.status);
         if (filters.buyerRef) params.append('buyerRef', filters.buyerRef);
         if (filters.startDate) params.append('startDate', formatISO(filters.startDate));
         if (filters.endDate) params.append('endDate', formatISO(filters.endDate));
