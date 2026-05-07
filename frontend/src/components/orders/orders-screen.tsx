@@ -15,7 +15,7 @@ import {
     useMediaQuery,
     useTheme
 } from '@mui/material';
-import { Visibility, Cancel, FilterList, Clear } from '@mui/icons-material';
+import { Visibility, Cancel, FilterList } from '@mui/icons-material';
 
 import { cancelOrder, getOrdersPaginated } from '../../services/order-service';
 import type OrderFilters from '../../models/order-filters';
@@ -24,6 +24,10 @@ import type Pagination from '../../models/pagination';
 import type OrderListingProjection from '../../models/order-listing-projection';
 import { useNavigate } from 'react-router-dom';
 import type { AxiosError } from 'axios';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { ptBR } from 'date-fns/locale';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const Orders: React.FC = () => {
     const navigate = useNavigate();
@@ -33,7 +37,9 @@ const Orders: React.FC = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [page, setPage] = useState<number>(0);
-    const [rowsPerPage, setRowsPerPage] = useState<number>(5);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const [dateFrom, setDateFrom] = useState<Date | null>(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+    const [dateTo, setDateTo] = useState<Date | null>(new Date());
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const [pagination, setPagination] = useState<Pagination>({
@@ -51,11 +57,15 @@ const Orders: React.FC = () => {
         endDate: new Date(),
     });
 
+    useEffect(() => {
+        setFilters((prev) => ({ ...prev, startDate: dateFrom ? dateFrom : new Date(), endDate: dateTo ? dateTo : new Date() }));
+    }, [dateFrom, dateTo]);
+
     const formatCurrency = (value: number) =>
         new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
     const formatDate = (dateString: string) =>
-        new Date(dateString).toLocaleDateString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        new Date(dateString).toLocaleDateString('pt-BR');
 
     const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
 
@@ -77,10 +87,7 @@ const Orders: React.FC = () => {
         setFilters((prev) => ({ ...prev, [field]: value }));
     };
 
-    const handleClear = () => {
-        setFilters({ status: '', buyerRef: '', startDate: new Date(), endDate: new Date() });
-        setPage(0);
-    };
+
 
     const loadTable = useCallback(() => {
         setIsLoading(true);
@@ -98,28 +105,18 @@ const Orders: React.FC = () => {
                 setIsLoading(false);
                 console.error("Erro ao buscar pedidos:", error);
             });
-    }, [rowsPerPage, page, filters]);
+    }, [rowsPerPage, page, filters, navigate]);
 
     useEffect(() => {
         loadTable();
-    }, [page, rowsPerPage]);
-
-    useEffect(() => {
-        setRowsPerPage(10)
-    }, []);
-
-
-    const handleSearch = () => {
-        setPage(0);
-        loadTable();
-    };
+    }, [loadTable]);
 
     const handleCancelOnClick = (order: OrderListingProjection) => {
         if (order.status === 'CANCELLED') {
             alert(`Pedido '${order.externalReference}' já está cancelado`);
             return;
         }
-        if (confirm(`Deseja cancelar o pedido '${order.externalReference}'?`)) {
+        if (window.confirm(`Deseja cancelar o pedido '${order.externalReference}'?`)) {
             cancelOrder(order.externalReference)
                 .then(() => {
                     alert("Cancelado com sucesso");
@@ -129,7 +126,6 @@ const Orders: React.FC = () => {
                     if (error.response && error.response.status === 403) {
                         alert("Sessão expirada, faça login novamente.")
                         navigate("/");
-                        return;
                     }
                 });
         }
@@ -146,19 +142,20 @@ const Orders: React.FC = () => {
 
     return (
         <Box sx={{
-            width: '100vw',        // Ocupa a largura da viewport
-            maxWidth: '100%',      // Previne overflow lateral
+            flexGrow: 1,
+            width: '100%',
+            maxWidth: '100%',
+            display: 'block',
             p: { xs: 1, sm: 3 },
             boxSizing: 'border-box',
-            overflowX: 'hidden'    // Garante que nada "vaze" para os lados
+            overflowX: 'hidden'
         }}>
-            <Paper elevation={2} sx={{ p: 2, mb: 3, borderRadius: 2, width: '100%', boxSizing: 'border-box' }}>
-                <Grid container spacing={2} sx={{ width: '100%', m: 0 }}>
+            {/* --- FILTROS --- */}
+            <Paper elevation={0} sx={{ p: 2, mb: 3, borderRadius: 2, border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'background.paper' }}>
+                <Grid container spacing={2}>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <TextField
-                            fullWidth
-                            select
-                            label="Status"
+                            fullWidth select label="Status"
                             value={filters.status || "ALL"}
                             onChange={handleFilterChange('status')}
                             size="small"
@@ -170,8 +167,6 @@ const Orders: React.FC = () => {
                         </TextField>
                     </Grid>
 
-                    {/* ... Repita os outros Grids mantendo o padrão de 'size' ... */}
-
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <TextField
                             fullWidth label="Ref. Comprador" value={filters.buyerRef}
@@ -179,84 +174,115 @@ const Orders: React.FC = () => {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 6, sm: 6, md: 2 }}>
-                        <TextField
-                            fullWidth label="Início" type="date"
-                            value={filters.startDate ? filters.startDate.toString().substring(0, 10) : ''}
-                            onChange={handleFilterChange('startDate')}
-                            size="small"
-                            slotProps={{ inputLabel: { shrink: true } }}
-                        />
+                    <Grid size={{ xs: 6, sm: 6, md: 3 }}>
+                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
+                            <DatePicker
+                                label="De"
+                                value={dateFrom}
+                                onChange={(newValue) => setDateFrom(newValue)}
+                                format="dd/MM/yyyy"
+                                slotProps={{
+                                    textField: {
+                                        size: 'small',
+                                        sx: {
+                                            backgroundColor: 'background.paper',
+                                            borderRadius: 1,
+                                            '& .MuiInputBase-input': {
+                                                color: '#fff',
+                                                '&::placeholder': {
+                                                    color: '#fff',
+                                                    opacity: 1,
+                                                },
+                                            },
+                                            '& .MuiInputLabel-root': {
+                                                color: 'rgba(255, 255, 255, 0.7)',
+                                                '&.Mui-focused': { color: '#fff' },
+                                            },
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                                                },
+                                                '&:hover fieldset': {
+                                                    borderColor: '#fff',
+                                                },
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: '#3399FF',
+                                                },
+                                            },
+                                            '& .MuiIconButton-root': {
+                                                color: '#fff',
+                                            },
+                                        },
+                                    },
+                                }}
+                            />
+                        </LocalizationProvider>
                     </Grid>
 
-                    <Grid size={{ xs: 6, sm: 6, md: 2 }}>
-                        <TextField
-                            fullWidth label="Fim" type="date"
-                            value={filters.endDate ? filters.endDate.toString().substring(0, 10) : ''}
-                            onChange={handleFilterChange('endDate')}
-                            size="small"
-                            slotProps={{ inputLabel: { shrink: true } }}
-                        />
-                    </Grid>
-
-                    <Grid size={{ xs: 12, md: 2 }}>
-                        <Stack direction="row" spacing={1} sx={{ width: '100%' }}>
-                            <Button
-                                fullWidth variant="contained" onClick={handleSearch}
-                                startIcon={<FilterList />}
-                            >
-                                Filtrar
-                            </Button>
-                            <Button
-                                variant="outlined" color="inherit" onClick={handleClear}
-                                sx={{ minWidth: '48px' }}
-                            >
-                                <Clear fontSize="small" />
-                            </Button>
-                        </Stack>
+                    <Grid size={{ xs: 6, sm: 6, md: 3 }}>
+                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
+                            <DatePicker
+                                label="Até"
+                                value={dateTo}
+                                onChange={(newValue) => setDateTo(newValue)}
+                                format="dd/MM/yyyy"
+                                slotProps={{
+                                    textField: {
+                                        size: 'small',
+                                        sx: {
+                                            backgroundColor: 'background.paper',
+                                            borderRadius: 1,
+                                            '& .MuiInputBase-input': {
+                                                color: '#fff',
+                                                '&::placeholder': {
+                                                    color: '#fff',
+                                                    opacity: 1,
+                                                },
+                                            },
+                                            '& .MuiInputLabel-root': {
+                                                color: 'rgba(255, 255, 255, 0.7)',
+                                                '&.Mui-focused': { color: '#fff' },
+                                            },
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                                                },
+                                                '&:hover fieldset': {
+                                                    borderColor: '#fff',
+                                                },
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: '#3399FF',
+                                                },
+                                            },
+                                            '& .MuiIconButton-root': {
+                                                color: '#fff',
+                                            },
+                                        },
+                                    },
+                                }}
+                            />
+                        </LocalizationProvider>
                     </Grid>
                 </Grid>
             </Paper>
-
 
             {isMobile ? (
                 /* --- VISÃO MOBILE (CARDS) --- */
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     {pagination.content.map((order) => (
-                        <Card key={order.orderId} elevation={3} sx={{ borderRadius: 2 }}>
+                        <Card key={order.orderId} sx={{ borderRadius: 2, backgroundImage: 'none', border: '1px solid rgba(255,255,255,0.1)' }}>
                             <CardContent>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                        {order.externalReference}
-                                    </Typography>
-                                    <Chip
-                                        label={order.status}
-                                        size="small"
-                                        color={order.status === 'CANCELLED' ? 'error' : 'success'}
-                                        sx={{ fontWeight: 'bold' }}
-                                    />
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{order.externalReference}</Typography>
+                                    <Chip label={order.status} size="small" color={order.status === 'CANCELLED' ? 'error' : 'success'} />
                                 </Box>
-
-                                <Typography variant="body2" color="text.secondary">
-                                    <strong>Comprador:</strong> {order.buyerName}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    <strong>Data:</strong> {formatDate(order.createdAt)}
-                                </Typography>
-
+                                <Typography variant="body2" color="text.secondary"><strong>Comprador:</strong> {order.buyerName}</Typography>
                                 <Divider sx={{ my: 1.5 }} />
-
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} color="primary">
-                                        {formatCurrency(order.total)}
-                                    </Typography>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} color="primary">{formatCurrency(order.total)}</Typography>
                                     <Stack direction="row" spacing={1}>
-                                        <IconButton size="small" color="primary" onClick={() => navigate(`/orders/details/${order.externalReference}`)}>
-                                            <Visibility fontSize="small" />
-                                        </IconButton>
-                                        <IconButton size="small" color="error" onClick={() => handleCancelOnClick(order)}>
-                                            <Cancel fontSize="small" />
-                                        </IconButton>
+                                        <IconButton size="small" color="primary" onClick={() => navigate(`/orders/details/${order.externalReference}`)}><Visibility fontSize="small" /></IconButton>
+                                        <IconButton size="small" color="error" onClick={() => handleCancelOnClick(order)}><Cancel fontSize="small" /></IconButton>
                                     </Stack>
                                 </Box>
                             </CardContent>
@@ -264,48 +290,44 @@ const Orders: React.FC = () => {
                     ))}
                 </Box>
             ) : (
-                /* --- VISÃO DESKTOP (TABELA) --- */
-                <TableContainer component={Paper} elevation={4} sx={{ borderRadius: 2 }}>
-                    <Table sx={{ minWidth: 800 }} size="small">
+                <TableContainer component={Paper} sx={{ borderRadius: 2, width: '100%', overflow: 'hidden', backgroundImage: 'none', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    <Table sx={{ tableLayout: 'fixed', width: '100%' }} size="small">
                         <TableHead>
-                            <TableRow sx={{ backgroundColor: 'action.selected' }}>
-                                <TableCell>Referência</TableCell>
-                                <TableCell>Data</TableCell>
-                                <TableCell>Comprador</TableCell>
-                                <TableCell>Vendedor</TableCell>
-                                <TableCell>Galpão</TableCell>
-                                <TableCell>Status</TableCell>
-                                <TableCell align="right">Total</TableCell>
-                                <TableCell align="center">Ações</TableCell>
+                            <TableRow sx={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                                <TableCell sx={{ width: '16%' }}>Referência</TableCell>
+                                <TableCell sx={{ width: '15%' }}>Data</TableCell>
+                                <TableCell sx={{ width: '15%' }}>Comprador</TableCell>
+                                <TableCell sx={{ width: '15%' }}>Vendedor</TableCell>
+                                <TableCell sx={{ width: '15%' }}>Galpão</TableCell>
+                                <TableCell sx={{ width: '120px' }}>Status</TableCell>
+                                <TableCell align="right" sx={{ width: '15%' }}>Total</TableCell>
+                                <TableCell align="center" sx={{ width: '100px' }}>Ações</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {pagination.content.map((order) => (
                                 <TableRow key={order.orderId} hover>
-                                    <TableCell sx={{ fontWeight: 'bold' }}>{order.externalReference}</TableCell>
-                                    <TableCell>{formatDate(order.createdAt)}</TableCell>
-                                    <TableCell>{order.buyerName}</TableCell>
-                                    <TableCell>{order.sellerName}</TableCell>
-                                    <TableCell>{order.warehouseName}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {order.externalReference}
+                                    </TableCell>
+                                    <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDate(order.createdAt)}</TableCell>
+                                    <TableCell sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {order.buyerName}
+                                    </TableCell>
+                                    <TableCell sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {order.sellerName}
+                                    </TableCell>
+                                    <TableCell sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {order.warehouseName}
+                                    </TableCell>
                                     <TableCell>
-                                        <Chip
-                                            label={order.status}
-                                            size="small"
-                                            color={order.status === 'CANCELLED' ? 'error' : 'success'}
-                                            sx={{ fontWeight: 'bold' }}
-                                        />
+                                        <Chip label={order.status} size="small" color={order.status === 'CANCELLED' ? 'error' : 'success'} sx={{ fontSize: '0.7rem' }} />
                                     </TableCell>
-                                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                                        {formatCurrency(order.total)}
-                                    </TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>{formatCurrency(order.total)}</TableCell>
                                     <TableCell align="center">
-                                        <Stack direction="row" spacing={1} sx={{ justifyContent: 'center' }}>
-                                            <IconButton size="small" color="primary" onClick={() => navigate(`/orders/details/${order.externalReference}`)}>
-                                                <Visibility fontSize="small" />
-                                            </IconButton>
-                                            <IconButton size="small" color="error" onClick={() => handleCancelOnClick(order)}>
-                                                <Cancel fontSize="small" />
-                                            </IconButton>
+                                        <Stack direction="row" spacing={0.5} sx={{ justifyContent: 'center' }}>
+                                            <IconButton size="small" color="primary" onClick={() => navigate(`/orders/details/${order.externalReference}`)}><Visibility fontSize="small" /></IconButton>
+                                            <IconButton size="small" color="error" onClick={() => handleCancelOnClick(order)}><Cancel fontSize="small" /></IconButton>
                                         </Stack>
                                     </TableCell>
                                 </TableRow>
@@ -314,6 +336,7 @@ const Orders: React.FC = () => {
                     </Table>
                 </TableContainer>
             )}
+
             <TablePagination
                 component="div"
                 count={pagination.totalElements}
@@ -322,10 +345,9 @@ const Orders: React.FC = () => {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage={isMobile ? "" : "Linhas:"}
+                sx={{ color: 'text.secondary' }}
             />
-
-
-        </Box >
+        </Box>
     );
 };
 

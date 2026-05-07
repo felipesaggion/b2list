@@ -7,6 +7,7 @@
   color: #fff;
 }
 
+
 body {
   display: flex;
   justify-content: center;
@@ -16,4 +17,5 @@ body {
   min-width: 100vw;
   background-size: cover;
   background-position: center;
+  overflow-x: hidden;
 }

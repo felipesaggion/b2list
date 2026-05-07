@@ -5,6 +5,9 @@ import Login from './components/login/login-screen.tsx'
 import Orders from './components/orders/orders-screen.tsx'
 import { createTheme, ThemeProvider } from '@mui/material'
 import OrderDetailsScreen from './components/orders/order-details-screen.tsx'
+import StatisticsDashboard from './components/dashboard/statistics-dashboard.tsx'
+import Layout from './components/layout/layout.tsx'
+import Logout from './components/login/logout.tsx'
 
 const darkTheme = createTheme({
   palette: {
@@ -13,13 +16,17 @@ const darkTheme = createTheme({
 });
 
 createRoot(document.getElementById('root')!).render(
-    <ThemeProvider theme={darkTheme}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
+  <ThemeProvider theme={darkTheme}>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/dashboard" element={<StatisticsDashboard />} />
           <Route path="/orders" element={<Orders />} />
-          <Route path="/orders/details/:externalReference" element={<OrderDetailsScreen />} />
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>,
+          <Route path="/orders/:externalReference" element={<OrderDetailsScreen />} />
+        </Route>
+        <Route path="/" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
+      </Routes>
+    </BrowserRouter>
+  </ThemeProvider>,
 )

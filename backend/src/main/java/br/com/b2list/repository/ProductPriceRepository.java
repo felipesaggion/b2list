@@ -24,7 +24,7 @@ public interface ProductPriceRepository extends JpaRepository<ProductPrice, UUID
                   AND o.createdAt BETWEEN :from AND :to
                   AND o.status = 'COMPLETED'
                 GROUP BY i.productCode, i.productName
-                ORDER BY SUM(i.quantity) DESC LIMIT 3
+                ORDER BY SUM(i.quantity) DESC LIMIT 5
             """)
     List<TopProductDTO> findTopProducts(String tenant, OffsetDateTime from, OffsetDateTime to);
 }

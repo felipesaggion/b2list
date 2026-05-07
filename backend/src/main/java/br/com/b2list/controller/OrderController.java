@@ -61,8 +61,8 @@ public class OrderController {
     }
 
     @GetMapping("/statistics")
-    public StatisticsDTO getStatisticsReport(@RequestParam OffsetDateTime from, @RequestParam OffsetDateTime to) {
-        return orderService.generateReport(TenantContext.getTenant(), from, to);
+    public StatisticsDTO getStatisticsReport(@RequestParam OffsetDateTime startDate, @RequestParam OffsetDateTime endDate) {
+        return orderService.generateReport(TenantContext.getTenant(), startDate, endDate);
     }
 
 }

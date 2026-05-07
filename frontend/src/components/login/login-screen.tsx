@@ -28,7 +28,7 @@ const Login = () => {
         login(username, password, tenantSelecionado)
             .then(_ => {
                 setIsLoading(false);
-                navigate("/orders");
+                navigate("/dashboard");
             })
             .catch(_ => {
                 alert("Ocorreu um erro durante a tentativa de login.");

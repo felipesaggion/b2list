@@ -32,7 +32,7 @@ public interface BuyerRepository extends JpaRepository<Buyer, UUID> {
                   AND o.createdAt BETWEEN :from AND :to
                   AND o.status = 'COMPLETED'
                 GROUP BY b.name
-                ORDER BY SUM(o.total) DESC LIMIT 3
+                ORDER BY SUM(o.total) DESC LIMIT 5
             """)
     List<TopBuyerDTO> findTopBuyers(String tenant, OffsetDateTime from, OffsetDateTime to);
 }
