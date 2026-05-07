@@ -1,30 +1,24 @@
-INSERT INTO public.order_item
-VALUES ('b25eb259-0a4a-40c9-9e28-808a6e27ef9c', '856c8dec-03b7-47c1-9734-b0c18772c805', 'PROD-019', 'Yoga Mat', 10,
-        30.0000, 45.0000, 300.00);
-INSERT INTO public.order_item
-VALUES ('b4af9291-3a27-4427-8aee-80c25a9d2018', '856c8dec-03b7-47c1-9734-b0c18772c805', 'PROD-033', 'Blender Pro', 5,
-        70.0000, 95.0000, 350.00);
-INSERT INTO public.order_item
-VALUES ('0267dc2a-3aab-4673-ab4f-f83a37e2cd6b', '383a9ec9-1b63-402a-aa93-cde5e370aa9d', 'PROD-019', 'Yoga Mat', 10,
-        30.0000, 45.0000, 300.00);
-INSERT INTO public.order_item
-VALUES ('b305778c-b9ae-4421-8871-9ffab859ce72', '383a9ec9-1b63-402a-aa93-cde5e370aa9d', 'PROD-033', 'Blender Pro', 5,
-        70.0000, 95.0000, 350.00);
-INSERT INTO public.order_item
-VALUES ('03f86b6c-fb63-43e1-9f0a-0b64e1ec9b06', '88e44891-bac1-4bd7-a67e-394b32098f41', 'PROD-019', 'Yoga Mat', 10,
-        30.0000, 45.0000, 300.00);
-INSERT INTO public.order_item
-VALUES ('21d27a67-da09-4f6d-8b19-3e1db36bf600', '88e44891-bac1-4bd7-a67e-394b32098f41', 'PROD-033', 'Blender Pro', 5,
-        70.0000, 95.0000, 350.00);
-INSERT INTO public.order_item
-VALUES ('007d39ca-4038-4326-adcf-61e2af8ade32', '300187ea-c598-4598-ab05-eab6c5dd91f2', 'PROD-019', 'Yoga Mat', 10,
-        30.0000, 45.0000, 300.00);
-INSERT INTO public.order_item
-VALUES ('87f6b140-d9ee-4e3b-9303-247973d939ee', '300187ea-c598-4598-ab05-eab6c5dd91f2', 'PROD-033', 'Blender Pro', 5,
-        70.0000, 95.0000, 350.00);
-INSERT INTO public.order_item
-VALUES ('176820cc-17cf-4381-950f-cd57677628bf', 'ead52c9d-d88f-4842-874b-e58dbd618a29', 'PROD-019', 'Yoga Mat', 10,
-        30.0000, 45.0000, 300.00);
-INSERT INTO public.order_item
-VALUES ('dd395bf3-cb57-4d0b-9158-5798aa88f939', 'ead52c9d-d88f-4842-874b-e58dbd618a29', 'PROD-033', 'Blender Pro', 5,
-        70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('b25eb259-0a4a-40c9-9e28-808a6e27ef9c', '856c8dec-03b7-47c1-9734-b0c18772c805', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('b4af9291-3a27-4427-8aee-80c25a9d2018', '856c8dec-03b7-47c1-9734-b0c18772c805', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('0267dc2a-3aab-4673-ab4f-f83a37e2cd6b', '383a9ec9-1b63-402a-aa93-cde5e370aa9d', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('b305778c-b9ae-4421-8871-9ffab859ce72', '383a9ec9-1b63-402a-aa93-cde5e370aa9d', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('03f86b6c-fb63-43e1-9f0a-0b64e1ec9b06', '88e44891-bac1-4bd7-a67e-394b32098f41', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('21d27a67-da09-4f6d-8b19-3e1db36bf600', '88e44891-bac1-4bd7-a67e-394b32098f41', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('007d39ca-4038-4326-adcf-61e2af8ade32', '300187ea-c598-4598-ab05-eab6c5dd91f2', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('87f6b140-d9ee-4e3b-9303-247973d939ee', '300187ea-c598-4598-ab05-eab6c5dd91f2', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('176820cc-17cf-4381-950f-cd57677628bf', 'ead52c9d-d88f-4842-874b-e58dbd618a29', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('dd395bf3-cb57-4d0b-9158-5798aa88f939', 'ead52c9d-d88f-4842-874b-e58dbd618a29', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('6004511b-e804-4a1b-852e-953f04694526', 'f9f432df-657b-4fdf-8be8-b521e7764c0c', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('69275373-f9b2-425e-89b0-56a8364bbba2', 'f9f432df-657b-4fdf-8be8-b521e7764c0c', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('31c5cda3-d24a-47c4-ac5f-b67089242d12', 'b24be68f-24a6-4b18-8200-b6d0ebc159bf', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('e0543426-2b53-41c3-a889-f743fafc6d31', 'b24be68f-24a6-4b18-8200-b6d0ebc159bf', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('e0c95caf-16cb-4c81-8ba1-0c58c5f65a71', 'e019e687-7a30-41c4-a337-88525c547217', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('9ea8d3c6-ce88-46d8-afa1-dc8c53afc0da', 'e019e687-7a30-41c4-a337-88525c547217', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('0be44683-439f-406e-ad8b-7a5d04ede5ef', '4e7a49d3-c45b-46e0-a614-58731510f4c3', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('8ea28670-0c15-4dc8-958f-4243fdd1279a', '4e7a49d3-c45b-46e0-a614-58731510f4c3', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('8858370d-eb8b-43c1-b9c8-7a4591e81af6', '9cb312c6-793d-4e81-8435-f907c4ff9275', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('48bd11b5-1857-4c8f-b390-ff49528a55a7', '9cb312c6-793d-4e81-8435-f907c4ff9275', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('dae402ba-2399-4ad2-b2a7-b71e0f39bcbc', 'd23c9f5b-db76-4e10-b531-4a0ba64ca5d0', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('acc45c3f-f7f3-477b-a3e2-46c2d447c24e', 'd23c9f5b-db76-4e10-b531-4a0ba64ca5d0', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);
+INSERT INTO public.order_item VALUES ('d579f5b3-5a55-4c3d-874b-3f82ed4696fb', '3a1e9b98-07f7-44ac-9363-2cec976d52ac', 'PROD-019', 'Yoga Mat', 10, 30.0000, 45.0000, 300.00);
+INSERT INTO public.order_item VALUES ('167a6ec6-c839-4e5c-8270-076a8e7a73ff', '3a1e9b98-07f7-44ac-9363-2cec976d52ac', 'PROD-033', 'Blender Pro', 5, 70.0000, 95.0000, 350.00);

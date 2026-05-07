@@ -10,13 +10,12 @@ import {
     TextField,
     MenuItem,
     Button,
-    InputAdornment,
     Backdrop,
     CircularProgress,
     useMediaQuery,
     useTheme
 } from '@mui/material';
-import { Visibility, Cancel, FilterList, Clear, Search } from '@mui/icons-material';
+import { Visibility, Cancel, FilterList, Clear } from '@mui/icons-material';
 
 import { cancelOrder, getOrdersPaginated } from '../../services/order-service';
 import type OrderFilters from '../../models/order-filters';
@@ -24,6 +23,7 @@ import { formatISO, isValid } from 'date-fns';
 import type Pagination from '../../models/pagination';
 import type OrderListingProjection from '../../models/order-listing-projection';
 import { useNavigate } from 'react-router-dom';
+import type { AxiosError } from 'axios';
 
 const Orders: React.FC = () => {
     const navigate = useNavigate();
@@ -89,7 +89,12 @@ const Orders: React.FC = () => {
                 setIsLoading(false);
                 setPagination(data as Pagination);
             })
-            .catch(error => {
+            .catch((error: AxiosError) => {
+                if (error.response && error.response.status === 403) {
+                    alert("Sessão expirada, faça login novamente.")
+                    navigate("/");
+                    return;
+                }
                 setIsLoading(false);
                 console.error("Erro ao buscar pedidos:", error);
             });
@@ -120,7 +125,13 @@ const Orders: React.FC = () => {
                     alert("Cancelado com sucesso");
                     loadTable();
                 })
-                .catch(() => alert("Erro ao cancelar"));
+                .catch((error: AxiosError) => {
+                    if (error.response && error.response.status === 403) {
+                        alert("Sessão expirada, faça login novamente.")
+                        navigate("/");
+                        return;
+                    }
+                });
         }
     };
 
@@ -148,18 +159,9 @@ const Orders: React.FC = () => {
                             fullWidth
                             select
                             label="Status"
-                            value={filters.status}
+                            value={filters.status || "ALL"}
                             onChange={handleFilterChange('status')}
                             size="small"
-                            slotProps={{
-                                select: {
-                                    MenuProps: {
-                                        PaperProps: {
-                                            style: { maxWidth: 250 }
-                                        }
-                                    }
-                                }
-                            }}
                         >
                             <MenuItem value="ALL">Todos</MenuItem>
                             <MenuItem value="COMPLETED">Completado</MenuItem>
@@ -174,15 +176,6 @@ const Orders: React.FC = () => {
                         <TextField
                             fullWidth label="Ref. Comprador" value={filters.buyerRef}
                             onChange={handleFilterChange('buyerRef')} size="small"
-                            slotProps={{
-                                input: {
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Search fontSize="small" />
-                                        </InputAdornment>
-                                    ),
-                                },
-                            }}
                         />
                     </Grid>
 
@@ -233,7 +226,7 @@ const Orders: React.FC = () => {
                         <Card key={order.orderId} elevation={3} sx={{ borderRadius: 2 }}>
                             <CardContent>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                    <Typography variant="subtitle1" fontWeight="bold">
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                                         {order.externalReference}
                                     </Typography>
                                     <Chip
@@ -254,7 +247,7 @@ const Orders: React.FC = () => {
                                 <Divider sx={{ my: 1.5 }} />
 
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Typography variant="subtitle1" fontWeight="bold" color="primary">
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} color="primary">
                                         {formatCurrency(order.total)}
                                     </Typography>
                                     <Stack direction="row" spacing={1}>
@@ -279,6 +272,8 @@ const Orders: React.FC = () => {
                                 <TableCell>Referência</TableCell>
                                 <TableCell>Data</TableCell>
                                 <TableCell>Comprador</TableCell>
+                                <TableCell>Vendedor</TableCell>
+                                <TableCell>Galpão</TableCell>
                                 <TableCell>Status</TableCell>
                                 <TableCell align="right">Total</TableCell>
                                 <TableCell align="center">Ações</TableCell>
@@ -290,6 +285,8 @@ const Orders: React.FC = () => {
                                     <TableCell sx={{ fontWeight: 'bold' }}>{order.externalReference}</TableCell>
                                     <TableCell>{formatDate(order.createdAt)}</TableCell>
                                     <TableCell>{order.buyerName}</TableCell>
+                                    <TableCell>{order.sellerName}</TableCell>
+                                    <TableCell>{order.warehouseName}</TableCell>
                                     <TableCell>
                                         <Chip
                                             label={order.status}

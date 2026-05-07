@@ -1,5 +1,4 @@
 import api from "../config/axios-config";
-import { AxiosError } from "axios";
 import type OrderFilters from "../models/order-filters";
 import { formatISO } from "date-fns";
 
@@ -24,9 +23,6 @@ export const getOrdersPaginated = async (size: number, page: number, filters: Or
         const response = await api.get(`/order?size=${size}&page=${page}&${queryString}`);
         return response.data;
     } catch (error: unknown) {
-        if (error instanceof AxiosError && error.response) {
-            throw error.response.data;
-        }
         throw error;
     }
 };
@@ -44,9 +40,6 @@ export const getOrderDetails = async (externalReference: string) => {
 
         return response.data;
     } catch (error: unknown) {
-        if (error instanceof AxiosError && error.response) {
-            throw error.response.data;
-        }
         throw error;
     }
 };
@@ -62,9 +55,6 @@ export const cancelOrder = async (externalReference: string) => {
 
         await api.get(`/order/${externalReference}/cancel`);
     } catch (error: unknown) {
-        if (error instanceof AxiosError && error.response) {
-            throw error.response.data;
-        }
         throw error;
     }
 };
