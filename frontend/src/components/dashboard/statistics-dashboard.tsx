@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { getOrderStatistics } from '../../services/order-service';
 import type { StatisticsResponse } from '../../models/statistics-response';
+import { useNavigate } from 'react-router-dom';
 
 const darkTheme = createTheme({
     palette: {
@@ -46,6 +47,8 @@ const StatCard = ({ title, value, icon, color }: { title: string; value: string 
 );
 
 const StatisticsDashboard = () => {
+    const navigate = useNavigate();
+
     const [data, setData] = useState<StatisticsResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -61,15 +64,19 @@ const StatisticsDashboard = () => {
                     setIsLoading(false);
                 })
                 .catch(error => {
+                    if (error.response.status === 403) {
+                        alert("Sessão expirada, faça login novamente.")
+                        navigate('/');
+                    }
                     setIsLoading(false);
                     console.error("Erro ao buscar estatísticas:", error);
                 });
         }
     };
 
-    useEffect(() => { 
+    useEffect(() => {
         loadData();
-     }, []);
+    }, []);
 
     const formatCurrency = (val: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val ?? 0);
 
@@ -108,7 +115,7 @@ const StatisticsDashboard = () => {
                                 label="De"
                                 value={dateFrom}
                                 onChange={(newValue) => setDateFrom(newValue)}
-                                format="dd/MM/yyyy" 
+                                format="dd/MM/yyyy"
                                 slotProps={{ textField: { size: 'small', sx: datePickerSx } }}
                             />
                             <DatePicker
