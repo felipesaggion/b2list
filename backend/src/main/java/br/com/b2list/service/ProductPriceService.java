@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface ProductPriceService {
     ProductPriceDTO save(ProductPriceDTO productPrice);
 
-    List<ProductPriceDTO> findAll();
+    List<ProductPriceDTO> findByTenantCodeAndWarehouseExternalReferenceEnabledTrue(String tenantCode, String externalReference);
 
     ProductPriceDTO findById(UUID id);
 

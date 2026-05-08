@@ -2,6 +2,7 @@ import api from "../config/axios-config";
 import type OrderFilters from "../models/order-filters";
 import { formatISO } from "date-fns";
 import type { StatisticsResponse } from "../models/statistics-response";
+import type { Order } from "../models/order";
 
 export const getOrdersPaginated = async (size: number, page: number, filters: OrderFilters) => {
     try {
@@ -23,6 +24,23 @@ export const getOrdersPaginated = async (size: number, page: number, filters: Or
 
         const response = await api.get(`/order?size=${size}&page=${page}&${queryString}`);
         return response.data;
+    } catch (error: unknown) {
+        throw error;
+    }
+};
+
+export const createOrder = async (order: Order) => {
+    try {
+        const accessToken = localStorage.getItem('accessToken');
+        const tenantCode = localStorage.getItem('tenantCode');
+
+        api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        api.defaults.headers.common['x-tenant'] = tenantCode;
+        api.defaults.headers.common['x-origin'] = "API";
+
+        const response = await api.post(`/order`, order);
+
+        return response.status === 201;
     } catch (error: unknown) {
         throw error;
     }

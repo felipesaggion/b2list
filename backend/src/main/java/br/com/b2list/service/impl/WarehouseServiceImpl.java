@@ -40,8 +40,9 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public List<WarehouseDTO> findAll() {
-        return warehouseRepository.findAll().stream().map(warehouseMapper::toDto).toList();
+    public List<WarehouseDTO> findAllByTenantCodeAndSellerExternalReferenceAndEnabledTrue(String tenant, String externalReference) {
+        return warehouseRepository.findAllByTenantCodeAndSellerIdAndEnabledTrue(tenant, externalReference)
+                .stream().map(warehouseMapper::toDto).toList();
     }
 
     @Override

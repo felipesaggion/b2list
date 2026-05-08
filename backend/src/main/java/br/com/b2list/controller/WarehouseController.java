@@ -1,7 +1,10 @@
 package br.com.b2list.controller;
 
 import br.com.b2list.domain.dto.WarehouseDTO;
+import br.com.b2list.enums.Error;
+import br.com.b2list.exception.TenantNotFoundException;
 import br.com.b2list.service.WarehouseService;
+import br.com.b2list.tenant.TenantContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +25,13 @@ public class WarehouseController {
     @Autowired
     private WarehouseService warehouseService;
 
-    @GetMapping
-    public List<WarehouseDTO> findAll() {
-        return warehouseService.findAll();
+    @GetMapping("/seller/{externalReference}")
+    public List<WarehouseDTO> findAll(@PathVariable String externalReference) throws TenantNotFoundException {
+        String tenant = TenantContext.getTenant();
+        if(tenant == null) {
+            throw new TenantNotFoundException("Tenant não encontrado nos headers", Error.ORD_VALIDATION_005);
+        }
+        return warehouseService.findAllByTenantCodeAndSellerExternalReferenceAndEnabledTrue(tenant, externalReference);
     }
 
     @GetMapping("/{id}")

@@ -35,8 +35,9 @@ public class PaymentConditionServiceImpl implements PaymentConditionService {
     }
 
     @Override
-    public List<PaymentConditionDTO> findAll() {
-        return paymentConditionRepository.findAll().stream().map(paymentConditionMapper::toDto).toList();
+    public List<PaymentConditionDTO> findByTenantCodeAndEnabledTrue(String tenant) {
+        return paymentConditionRepository.findByTenantCodeAndEnabledTrue(tenant)
+                .stream().map(paymentConditionMapper::toDto).toList();
     }
 
     @Override

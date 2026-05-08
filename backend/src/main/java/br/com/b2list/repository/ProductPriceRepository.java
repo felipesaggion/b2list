@@ -27,4 +27,13 @@ public interface ProductPriceRepository extends JpaRepository<ProductPrice, UUID
                 ORDER BY SUM(i.quantity) DESC LIMIT 5
             """)
     List<TopProductDTO> findTopProducts(String tenant, OffsetDateTime from, OffsetDateTime to);
+
+    @Query("""
+                SELECT p
+                FROM ProductPrice p
+                WHERE p.tenantCode = :tenantCode
+                  AND p.enabled = true
+                  AND p.warehouse.id = (SELECT w.id FROM Warehouse w WHERE w.externalReference = :externalReference)
+            """)
+    List<ProductPrice> findByTenantCodeAndWarehouseExternalReferenceEnabledTrue(String tenantCode, String externalReference);
 }

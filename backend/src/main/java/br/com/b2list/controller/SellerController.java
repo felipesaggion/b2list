@@ -1,7 +1,10 @@
 package br.com.b2list.controller;
 
 import br.com.b2list.domain.dto.SellerDTO;
+import br.com.b2list.enums.Error;
+import br.com.b2list.exception.TenantNotFoundException;
 import br.com.b2list.service.SellerService;
+import br.com.b2list.tenant.TenantContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +26,12 @@ public class SellerController {
     private SellerService sellerService;
 
     @GetMapping
-    public List<SellerDTO> findAll() {
-        return sellerService.findAll();
+    public List<SellerDTO> findAll() throws TenantNotFoundException {
+        String tenant = TenantContext.getTenant();
+        if(tenant == null) {
+            throw new TenantNotFoundException("Tenant não encontrado nos headers", Error.ORD_VALIDATION_005);
+        }
+        return sellerService.findByTenantCodeAndEnabledTrue(tenant);
     }
 
     @GetMapping("/{id}")

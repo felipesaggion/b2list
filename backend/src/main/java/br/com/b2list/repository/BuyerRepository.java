@@ -35,5 +35,7 @@ public interface BuyerRepository extends JpaRepository<Buyer, UUID> {
                 ORDER BY SUM(o.total) DESC LIMIT 5
             """)
     List<TopBuyerDTO> findTopBuyers(String tenant, OffsetDateTime from, OffsetDateTime to);
+
+    List<Buyer> findAllByTenantCodeAndEnabledTrue(String tenantCode);
 }
 

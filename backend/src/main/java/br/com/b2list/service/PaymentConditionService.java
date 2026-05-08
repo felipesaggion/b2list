@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface PaymentConditionService {
     PaymentConditionDTO save(PaymentConditionDTO buyer);
 
-    List<PaymentConditionDTO> findAll();
+    List<PaymentConditionDTO> findByTenantCodeAndEnabledTrue(String tenantCode);
 
     PaymentConditionDTO findById(UUID id);
 

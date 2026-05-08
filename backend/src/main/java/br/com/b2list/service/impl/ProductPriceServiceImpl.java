@@ -41,8 +41,9 @@ public class ProductPriceServiceImpl implements ProductPriceService {
     }
 
     @Override
-    public List<ProductPriceDTO> findAll() {
-        return productPriceRepository.findAll().stream().map(productPriceMapper::toDto).toList();
+    public List<ProductPriceDTO> findByTenantCodeAndWarehouseExternalReferenceEnabledTrue(String tenantCode, String externalReference) {
+        return productPriceRepository.findByTenantCodeAndWarehouseExternalReferenceEnabledTrue(tenantCode, externalReference)
+                .stream().map(productPriceMapper::toDto).toList();
     }
 
     @Override

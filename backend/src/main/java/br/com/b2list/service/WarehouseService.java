@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface WarehouseService {
     WarehouseDTO save(WarehouseDTO buyer);
 
-    List<WarehouseDTO> findAll();
+    List<WarehouseDTO> findAllByTenantCodeAndSellerExternalReferenceAndEnabledTrue(String tenant, String externalReference);
 
     WarehouseDTO findById(UUID id);
 

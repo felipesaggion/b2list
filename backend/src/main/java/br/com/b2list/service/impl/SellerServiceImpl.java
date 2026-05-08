@@ -38,8 +38,8 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public List<SellerDTO> findAll() {
-        return sellerRepository.findAll().stream().map(sellerMapper::toDto).toList();
+    public List<SellerDTO> findByTenantCodeAndEnabledTrue(String tenantCode) {
+        return sellerRepository.findByTenantCodeAndEnabledTrue(tenantCode).stream().map(sellerMapper::toDto).toList();
     }
 
     @Override

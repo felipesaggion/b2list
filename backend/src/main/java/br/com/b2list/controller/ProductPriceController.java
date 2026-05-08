@@ -1,7 +1,11 @@
 package br.com.b2list.controller;
 
 import br.com.b2list.domain.dto.ProductPriceDTO;
+import br.com.b2list.enums.Error;
+import br.com.b2list.exception.TenantNotFoundException;
 import br.com.b2list.service.ProductPriceService;
+import br.com.b2list.tenant.TenantContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/product-price")
 public class ProductPriceController {
@@ -22,9 +27,13 @@ public class ProductPriceController {
     @Autowired
     private ProductPriceService sellerService;
 
-    @GetMapping
-    public List<ProductPriceDTO> findAll() {
-        return sellerService.findAll();
+    @GetMapping("/warehouse/{externalReference}")
+    public List<ProductPriceDTO> findAll(@PathVariable String externalReference) throws TenantNotFoundException {
+        String tenant = TenantContext.getTenant();
+        if (tenant == null) {
+            throw new TenantNotFoundException("Tenant não encontrado nos headers", Error.ORD_VALIDATION_005);
+        }
+        return sellerService.findByTenantCodeAndWarehouseExternalReferenceEnabledTrue(tenant, externalReference);
     }
 
     @GetMapping("/{id}")

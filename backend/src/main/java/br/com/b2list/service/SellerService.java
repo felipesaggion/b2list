@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface SellerService {
     SellerDTO save(SellerDTO buyer);
 
-    List<SellerDTO> findAll();
+    List<SellerDTO> findByTenantCodeAndEnabledTrue(String tenantCode);
 
     SellerDTO findById(UUID id);
 

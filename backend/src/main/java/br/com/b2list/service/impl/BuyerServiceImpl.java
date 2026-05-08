@@ -47,8 +47,8 @@ public class BuyerServiceImpl implements BuyerService {
     }
 
     @Override
-    public List<BuyerDTO> findAll() {
-        return buyerRepository.findAll().stream().map(buyerMapper::toDto).toList();
+    public List<BuyerDTO> findAllByTenantCodeAndEnabledTrue(String tenantCode) {
+        return buyerRepository.findAllByTenantCodeAndEnabledTrue(tenantCode).stream().map(buyerMapper::toDto).toList();
     }
 
     @Override

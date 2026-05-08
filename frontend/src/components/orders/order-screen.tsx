@@ -15,7 +15,7 @@ import {
     useMediaQuery,
     useTheme
 } from '@mui/material';
-import { Visibility, Cancel, FilterList, Add } from '@mui/icons-material';
+import { Visibility, Cancel, Add } from '@mui/icons-material';
 
 import { cancelOrder, getOrdersPaginated } from '../../services/order-service';
 import type OrderFilters from '../../models/order-filters';
@@ -29,11 +29,10 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ptBR } from 'date-fns/locale';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-const Orders: React.FC = () => {
+const Order: React.FC = () => {
     const navigate = useNavigate();
     const theme = useTheme();
 
-    // Detecta se a tela é menor que 600px (celular)
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [page, setPage] = useState<number>(0);
@@ -290,7 +289,6 @@ const Orders: React.FC = () => {
             </Paper>
 
             {isMobile ? (
-                /* --- VISÃO MOBILE (CARDS) --- */
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     {pagination.content.map((order) => (
                         <Card key={order.orderId} sx={{ borderRadius: 2, backgroundImage: 'none', border: '1px solid rgba(255,255,255,0.1)' }}>
@@ -374,4 +372,4 @@ const Orders: React.FC = () => {
     );
 };
 
-export default Orders;
+export default Order;

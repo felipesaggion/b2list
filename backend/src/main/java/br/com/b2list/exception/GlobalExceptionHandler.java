@@ -45,4 +45,12 @@ public class GlobalExceptionHandler {
         log.error(ToStringBuilder.reflectionToString(error, ToStringStyle.MULTI_LINE_STYLE));
         return ResponseEntity.unprocessableEntity().body(error);
     }
+    @ExceptionHandler(TenantNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleTenantNotFoundException(TenantNotFoundException ex) {
+        ErrorResponseDTO error = ErrorUtil.buildErrorResponse(ex.getError());
+        List<String> details = List.of(ex.getMessage());
+        error.setDetails(details);
+        log.error(ToStringBuilder.reflectionToString(error, ToStringStyle.MULTI_LINE_STYLE));
+        return ResponseEntity.unprocessableEntity().body(error);
+    }
 }

@@ -1,7 +1,10 @@
 package br.com.b2list.controller;
 
 import br.com.b2list.domain.dto.PaymentConditionDTO;
+import br.com.b2list.enums.Error;
+import br.com.b2list.exception.TenantNotFoundException;
 import br.com.b2list.service.PaymentConditionService;
+import br.com.b2list.tenant.TenantContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +26,12 @@ public class PaymentConditionController {
     private PaymentConditionService paymentConditionService;
 
     @GetMapping
-    public List<PaymentConditionDTO> findAll() {
-        return paymentConditionService.findAll();
+    public List<PaymentConditionDTO> findAll() throws TenantNotFoundException {
+        String tenant = TenantContext.getTenant();
+        if(tenant == null) {
+            throw new TenantNotFoundException("Tenant não encontrado nos headers", Error.ORD_VALIDATION_005);
+        }
+        return paymentConditionService.findByTenantCodeAndEnabledTrue(tenant);
     }
 
     @GetMapping("/{id}")
