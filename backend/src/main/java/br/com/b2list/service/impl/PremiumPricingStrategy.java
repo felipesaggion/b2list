@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Component("TEN002Pricing")
-public class DefaultPremiumStrategy implements OrderPricingStrategy {
+public class PremiumPricingStrategy implements OrderPricingStrategy {
 
     @Override
     public void calculate(Order order, PaymentCondition rules) {
