@@ -209,6 +209,10 @@ const OrderDetailsScreen: React.FC = () => {
                                             - {formatCurrency(order.discountValue)}
                                         </Typography>
                                     </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography variant="body2">Frete grátis:</Typography>
+                                        <Typography variant="body2">{order.total >= order.paymentCondition.freeShippingThreshold ? 'Sim' : 'Não'}</Typography>
+                                    </Box>
                                     <Divider sx={{ my: 1, borderColor: 'rgba(255,255,255,0.2)' }} />
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Total</Typography>
