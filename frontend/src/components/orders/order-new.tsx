@@ -23,6 +23,7 @@ import type { PaymentCondition } from '../../models/payment-condition';
 import { getProductPrices } from '../../services/product-price-service';
 import type { ProductPrice } from '../../models/product-price';
 import { createOrder } from '../../services/order-service';
+import type { ErrorResponse } from '../../models/error';
 
 const CreateOrder: React.FC = () => {
   const navigate = useNavigate();
@@ -165,7 +166,17 @@ const CreateOrder: React.FC = () => {
         }
       }).catch(err => {
         console.error(err);
-        alert("Erro ao criar pedido.");
+        if (err.response.status === 403) {
+          alert("Sessão expirada, faça login novamente.")
+          navigate('/');
+          return;
+        }
+        const data = err.response.data as ErrorResponse;
+        alert(`
+            Erro ao criar o pedido.
+            detlhes do erro:
+            ${data.message}
+          `);
       });
   }
 
