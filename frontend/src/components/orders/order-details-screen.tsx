@@ -188,7 +188,7 @@ const OrderDetailsScreen: React.FC = () => {
                                 </Box>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <Typography variant="body2">Extra:</Typography>
-                                    <Typography variant="body2" color="success.main">{order.paymentCondition.extraDiscountPercentage}%</Typography>
+                                    <Typography variant="body2" color="success.main">{order.paymentCondition.extraDiscountPercentage + order.paymentCondition.operationalFeePercentage}%</Typography>
                                 </Box>
                             </CardContent>
                         </Card>
